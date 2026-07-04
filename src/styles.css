@@ -1,3 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  --color-background: #FAF9F6;
+  --color-foreground: #1C2321;
+  --color-primary: #0F6B5C;
+  --color-primary-hover: #0C5449;
+  --color-secondary: #C08A28;
+  --color-border: #E5E1D8;
+  --color-surface: #FFFFFF;
+  --color-muted: #6B7268;
+  --color-danger: #B3261E;
+  --color-success: #2D6A4F;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Newsreader', Georgia, serif;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+}
