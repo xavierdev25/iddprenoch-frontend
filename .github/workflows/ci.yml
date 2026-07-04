@@ -38,9 +38,10 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # `ng build` genera tanto el bundle de navegador (browser/) como el
-      # servidor SSR (server/server.mjs, usado por Passenger para las rutas
-      # con RenderMode.Server/Prerender). Se sube dist/iglesia completo.
+      # Sitio estático puro: se sube solo dist/iglesia/browser (incluye
+      # .htaccess con el fallback de SPA, copiado desde public/ en el build).
+      # `ng build` sigue generando dist/iglesia/server (SSR), pero ya no se
+      # usa en producción y no se despliega.
       - name: Subir build a cPanel (FTP)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -48,9 +49,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_SERVER_DIR }}/
-          local-dir: ./dist/iglesia/
-
-      - name: Reiniciar la app (Passenger)
-        run: |
-          curl --ftp-create-dirs -T /dev/null \
-            "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}${{ secrets.FTP_SERVER_DIR }}/tmp/restart.txt"
+          local-dir: ./dist/iglesia/browser/
