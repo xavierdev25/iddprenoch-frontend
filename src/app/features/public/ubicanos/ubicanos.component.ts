@@ -23,7 +23,7 @@ import { IglesiaLocalizadorComponent } from '../shared/iglesia-localizador/igles
       <div class="mt-12 p-6 bg-primary/5 border border-primary/15 rounded-xl">
         <h2 class="font-semibold text-foreground mb-2">¿No encuentras tu iglesia?</h2>
         <p class="text-sm text-muted leading-relaxed">
-          Contáctanos a través de la Secretaría Regional al <strong>987 654 321</strong> o
+          Contáctanos a través de la Secretaría Regional al <strong>954 102 491</strong> o
           escríbenos a
           <a href="mailto:secretaria@iddp.pe" class="text-primary hover:underline"
             >secretaria&#64;iddp.pe</a
@@ -34,4 +34,4 @@ import { IglesiaLocalizadorComponent } from '../shared/iglesia-localizador/igles
     </div>
   `,
 })
-export class UbicanosComponent {}
+export class UbicanosComponent { }

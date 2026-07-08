@@ -45,7 +45,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
             label="Teléfono"
             [control]="form.controls.telefono"
             type="tel"
-            placeholder="987 654 321"
+            placeholder="954 102 491"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">

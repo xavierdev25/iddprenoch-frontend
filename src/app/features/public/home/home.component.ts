@@ -31,12 +31,12 @@ import {
       <div class="relative max-w-6xl mx-auto px-6">
         <div class="flex flex-col min-[860px]:flex-row items-stretch gap-8">
           <div class="max-w-[600px] flex flex-col justify-center items-start">
-            <!-- Hero tag -->
+            <!-- Hero tag 
             <span
               class="inline-block bg-background border border-secondary text-secondary text-xs font-semibold tracking-[.06em] uppercase px-3.5 py-1.5 rounded-full mb-[22px]"
             >
               Convención regional 2026
-            </span>
+            </span>-->
 
             <!-- Headline: solo "conectada" en italic + primary -->
             <h1

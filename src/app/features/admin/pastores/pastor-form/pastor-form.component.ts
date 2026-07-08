@@ -72,7 +72,7 @@ import { ImageUploadComponent } from '../../../../shared/ui/image-upload/image-u
           label="Celular (opcional)"
           [control]="form.controls.celular"
           type="tel"
-          placeholder="987 654 321"
+          placeholder="954 102 491"
         />
         <app-image-upload label="Foto de perfil (opcional)" [control]="form.controls.foto" />
 
