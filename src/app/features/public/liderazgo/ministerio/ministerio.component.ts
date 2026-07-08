@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { MinisteriosService } from '../../../../core/services/ministerios.service';
 import { LideresService, LiderPublico } from '../../../../core/services/lideres.service';
 import { Ministerio } from '../../../../core/models';
+import { SeoService } from '../../../../core/services/seo.service';
 
 interface MinisterioAccent {
   bg: string;
@@ -127,6 +128,7 @@ export class MinisterioComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly ministeriosService = inject(MinisteriosService);
   private readonly lideresService = inject(LideresService);
+  private readonly seoService = inject(SeoService);
 
   ministerio = signal<Ministerio | null>(null);
   // LiderPublico: solo { id, nombre, apellido, ministerioId } — el endpoint
@@ -145,6 +147,10 @@ export class MinisterioComponent implements OnInit, OnDestroy {
           next: (m) => {
             this.ministerio.set(m);
             this.cargando.set(false);
+            this.seoService.setPage(
+              `${m.nombre} — IDDP Norte Chico`,
+              m.descripcion || `Ministerio de ${m.nombre} de la Iglesia de Dios del Perú — Región Norte Chico.`,
+            );
           },
           error: () => {
             this.ministerio.set(null);

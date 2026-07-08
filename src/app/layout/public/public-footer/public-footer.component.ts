@@ -12,22 +12,7 @@ import { RouterLink } from '@angular/router';
           <!-- Brand -->
           <div>
             <div class="flex items-center gap-2.5 mb-2.5">
-              <svg class="w-[34px] h-[34px]" viewBox="0 0 40 40">
-                <circle cx="20" cy="20" r="19" fill="none" stroke="#0F6B5C" stroke-width="2" />
-                <path
-                  d="M20 8 L20 24 M13 14 L27 14"
-                  stroke="#0F6B5C"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M14 22 Q20 34 26 22"
-                  fill="none"
-                  stroke="#C08A28"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                />
-              </svg>
+              <img src="/logoIDDP.webp" alt="Logo IDDP" class="h-9 w-9 object-contain" />
               <span class="font-display font-semibold text-[18px] text-foreground"
                 >IDDP Región Norte Chico</span
               >
@@ -37,7 +22,8 @@ import { RouterLink } from '@angular/router';
             </p>
             <div class="flex gap-2.5 mt-3.5">
               <a
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61552325525606"
+                 target="_blank"
                 aria-label="Facebook"
                 class="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center"
               >
@@ -53,7 +39,8 @@ import { RouterLink } from '@angular/router';
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://api.whatsapp.com/send/?phone=954102491&text&type=phone_number&app_absent=0"
+                target="_blank"
                 aria-label="WhatsApp"
                 class="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center"
               >

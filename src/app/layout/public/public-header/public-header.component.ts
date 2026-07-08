@@ -1,32 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MobileDrawerComponent } from '../mobile-drawer/mobile-drawer.component';
+import { ImageUploadComponent } from "../../../shared/ui/image-upload/image-upload.component";
 
 @Component({
   selector: 'app-public-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MobileDrawerComponent],
+  imports: [RouterLink, RouterLinkActive, MobileDrawerComponent, ImageUploadComponent],
   template: `
     <header class="sticky top-0 z-30 bg-background border-b border-border">
       <div class="max-w-6xl mx-auto px-4 h-[72px] flex items-center justify-between gap-6">
         <!-- Logo -->
         <a routerLink="/" class="flex items-center gap-2.5 shrink-0 group">
-          <svg class="w-[34px] h-[34px]" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill="none" stroke="#0F6B5C" stroke-width="2" />
-            <path
-              d="M20 8 L20 24 M13 14 L27 14"
-              stroke="#0F6B5C"
-              stroke-width="2.5"
-              stroke-linecap="round"
-            />
-            <path
-              d="M14 22 Q20 34 26 22"
-              fill="none"
-              stroke="#C08A28"
-              stroke-width="2.2"
-              stroke-linecap="round"
-            />
-          </svg>
+          <img src="/logoIDDP.webp" alt="Logo IDDP" class="h-9 w-9 object-contain" />
           <span class="font-display font-semibold text-[18px] text-foreground hidden sm:block">
             IDDP · Región Norte Chico
           </span>

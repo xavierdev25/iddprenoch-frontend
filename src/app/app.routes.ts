@@ -22,7 +22,15 @@ export const routes: Routes = [
     path: '',
     component: PublicShellComponent,
     children: [
-      { path: '', component: HomeComponent, title: 'IDDP Región Norte Chico' },
+      {
+        path: '',
+        component: HomeComponent,
+        title: 'IDDP Región Norte Chico',
+        data: {
+          description:
+            'Iglesia de Dios del Perú — Región Norte Chico. Más de 10 congregaciones en Barranca, Huaura y Huaral unidas en fe y servicio.',
+        },
+      },
       {
         path: 'quienes-somos',
         children: [
@@ -31,22 +39,36 @@ export const routes: Routes = [
             path: 'directiva',
             component: DirectivaComponent,
             title: 'Directiva — IDDP Norte Chico',
+            data: { description: 'Conoce a la directiva de la Iglesia de Dios del Perú — Región Norte Chico.' },
           },
           {
             path: 'mision-vision-valores',
             component: MisionVisionComponent,
             title: 'Misión, Visión y Valores — IDDP Norte Chico',
+            data: {
+              description:
+                'Misión, visión y valores que guían a la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
-          { path: 'historia', component: HistoriaComponent, title: 'Historia — IDDP Norte Chico' },
+          {
+            path: 'historia',
+            component: HistoriaComponent,
+            title: 'Historia — IDDP Norte Chico',
+            data: { description: 'La historia de la Iglesia de Dios del Perú en la Región Norte Chico.' },
+          },
           {
             path: 'principios-doctrinales',
             component: PrincipiosDoctrinalesComponent,
             title: 'Principios Doctrinales — IDDP Norte Chico',
+            data: {
+              description: 'Los principios doctrinales de la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
           {
             path: 'que-creemos',
             component: QueCreeemosComponent,
             title: 'Qué Creemos — IDDP Norte Chico',
+            data: { description: 'Lo que cree la Iglesia de Dios del Perú — Región Norte Chico.' },
           },
         ],
       },
@@ -54,6 +76,9 @@ export const routes: Routes = [
         path: 'liderazgo/:slug',
         component: MinisterioComponent,
         title: 'Ministerio — IDDP Norte Chico',
+        data: {
+          description: 'Ministerios y liderazgo de la Iglesia de Dios del Perú — Región Norte Chico.',
+        },
       },
       {
         path: 'recursos',
@@ -63,24 +88,38 @@ export const routes: Routes = [
             path: 'plan-estrategico',
             component: PlanEstrategicoComponent,
             title: 'Plan Estratégico — IDDP Norte Chico',
+            data: { description: 'Plan estratégico de la Iglesia de Dios del Perú — Región Norte Chico.' },
           },
           {
             path: 'plan-operativo',
             component: PlanOperativoComponent,
             title: 'Plan Operativo — IDDP Norte Chico',
+            data: { description: 'Plan operativo de la Iglesia de Dios del Perú — Región Norte Chico.' },
           },
           {
             path: 'accesos-adicionales',
             component: AccesosAdicionalesComponent,
             title: 'Accesos Adicionales — IDDP Norte Chico',
+            data: {
+              description: 'Accesos adicionales de la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
         ],
       },
-      { path: 'ubicanos', component: UbicanosComponent, title: 'Ubícanos — IDDP Norte Chico' },
+      {
+        path: 'ubicanos',
+        component: UbicanosComponent,
+        title: 'Ubícanos — IDDP Norte Chico',
+        data: {
+          description:
+            'Encuentra las congregaciones de la Iglesia de Dios del Perú en Barranca, Huaura y Huaral.',
+        },
+      },
     ],
   },
   {
     path: 'admin',
+    data: { noIndex: true },
     children: [
       {
         path: 'login',
