@@ -23,33 +23,41 @@ import { ImageLightboxComponent, LightboxImage } from '../../../shared/ui/image-
       </svg>
 
       <div class="relative max-w-6xl mx-auto px-6">
-        <div class="max-w-[640px]">
-          <!-- Hero tag -->
-          <span class="inline-block bg-background border border-secondary text-secondary text-xs font-semibold tracking-[.06em] uppercase px-3.5 py-1.5 rounded-full mb-[22px]">
-            Convención regional 2026
-          </span>
+        <div class="flex flex-col min-[860px]:flex-row items-stretch gap-10">
+          <div class="max-w-[640px] flex flex-col justify-center items-start">
+            <!-- Hero tag -->
+            <span class="inline-block bg-background border border-secondary text-secondary text-xs font-semibold tracking-[.06em] uppercase px-3.5 py-1.5 rounded-full mb-[22px]">
+              Convención regional 2026
+            </span>
 
-          <!-- Headline: solo "conectada" en italic + primary -->
-          <h1 class="text-[36px] min-[860px]:text-[52px] leading-[1.15] tracking-[-.01em] text-foreground mb-[18px]">
-            Una iglesia <em class="italic text-primary">conectada</em>, de Barranca a Huaral.
-          </h1>
+            <!-- Headline: solo "conectada" en italic + primary -->
+            <h1 class="text-[36px] min-[860px]:text-[52px] leading-[1.15] tracking-[-.01em] text-foreground mb-[18px]">
+              Una iglesia <em class="italic text-primary">conectada </em>con la misión de Cristo.
+            </h1>
 
-          <p class="text-muted text-[17px] leading-relaxed max-w-[480px]">
-            Encuentra tu congregación, entérate de los próximos eventos y conoce el liderazgo
-            que sirve a la Región Norte Chico.
-          </p>
+            <p class="text-muted text-[17px] leading-relaxed max-w-[480px]">
+              Encuentra una iglesia cerca de ti, conoce nuestros ministerios, participa en los próximos eventos y sé parte de una comunidad que vive para Cristo.
+            </p>
 
-          <div class="flex flex-wrap gap-3.5 mt-8">
-            <a
-              href="#locator"
-              class="inline-flex items-center px-6 py-[13px] rounded-[9px] bg-primary text-white font-semibold text-[15px] hover:bg-primary-hover transition-colors">
-              Encuentra tu iglesia
-            </a>
-            <a
-              href="#eventos"
-              class="inline-flex items-center px-6 py-[13px] rounded-[9px] border border-border font-semibold text-[15px] hover:border-foreground transition-colors">
-              Próximos eventos
-            </a>
+            <div class="flex flex-wrap gap-3.5 mt-8">
+              <a
+                href="#locator"
+                class="inline-flex items-center px-6 py-[13px] rounded-[9px] bg-primary text-white font-semibold text-[15px] hover:bg-primary-hover transition-colors">
+                Encuentra tu iglesia
+              </a>
+              <a
+                href="#eventos"
+                class="inline-flex items-center px-6 py-[13px] rounded-[9px] border border-border font-semibold text-[15px] hover:border-foreground transition-colors">
+                Próximos eventos
+              </a>
+            </div>
+          </div>
+
+          <div class="w-full min-[860px]:w-[380px] shrink-0">
+            <img
+              src="/imageHero.webp"
+              alt="Comunidad de la iglesia reunida"
+              class="w-full h-full min-h-[280px] rounded-[18px] object-contain" />
           </div>
         </div>
       </div>
