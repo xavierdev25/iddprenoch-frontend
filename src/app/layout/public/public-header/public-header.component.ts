@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MobileDrawerComponent } from '../mobile-drawer/mobile-drawer.component';
-import { ImageUploadComponent } from "../../../shared/ui/image-upload/image-upload.component";
 
 @Component({
   selector: 'app-public-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MobileDrawerComponent, ImageUploadComponent],
+  imports: [RouterLink, RouterLinkActive, MobileDrawerComponent],
   template: `
     <header class="sticky top-0 z-30 bg-background border-b border-border">
       <div class="max-w-6xl mx-auto px-4 h-[72px] flex items-center justify-between gap-6">
