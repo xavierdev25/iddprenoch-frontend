@@ -10,11 +10,11 @@ const GRADIENTS = [
 /** Up to 2 initials from the most meaningful words in a name (skips articles/prepositions and the "IDDP" prefix). */
 export function getInitials(text: string): string {
   const words = text.replace(/["""]/g, '').trim().split(/\s+/).filter(Boolean);
-  const meaningful = words.filter(w => !STOPWORDS.has(w));
+  const meaningful = words.filter((w) => !STOPWORDS.has(w));
   const source = meaningful.length > 0 ? meaningful : words;
   const initials = source
     .slice(0, 2)
-    .map(w => w[0]?.toUpperCase() ?? '')
+    .map((w) => w[0]?.toUpperCase() ?? '')
     .join('');
   return initials || '?';
 }

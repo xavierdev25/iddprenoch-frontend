@@ -27,21 +27,53 @@ export const routes: Routes = [
         path: 'quienes-somos',
         children: [
           { path: '', redirectTo: 'directiva', pathMatch: 'full' },
-          { path: 'directiva', component: DirectivaComponent, title: 'Directiva — IDDP Norte Chico' },
-          { path: 'mision-vision-valores', component: MisionVisionComponent, title: 'Misión, Visión y Valores — IDDP Norte Chico' },
+          {
+            path: 'directiva',
+            component: DirectivaComponent,
+            title: 'Directiva — IDDP Norte Chico',
+          },
+          {
+            path: 'mision-vision-valores',
+            component: MisionVisionComponent,
+            title: 'Misión, Visión y Valores — IDDP Norte Chico',
+          },
           { path: 'historia', component: HistoriaComponent, title: 'Historia — IDDP Norte Chico' },
-          { path: 'principios-doctrinales', component: PrincipiosDoctrinalesComponent, title: 'Principios Doctrinales — IDDP Norte Chico' },
-          { path: 'que-creemos', component: QueCreeemosComponent, title: 'Qué Creemos — IDDP Norte Chico' },
+          {
+            path: 'principios-doctrinales',
+            component: PrincipiosDoctrinalesComponent,
+            title: 'Principios Doctrinales — IDDP Norte Chico',
+          },
+          {
+            path: 'que-creemos',
+            component: QueCreeemosComponent,
+            title: 'Qué Creemos — IDDP Norte Chico',
+          },
         ],
       },
-      { path: 'liderazgo/:slug', component: MinisterioComponent, title: 'Ministerio — IDDP Norte Chico' },
+      {
+        path: 'liderazgo/:slug',
+        component: MinisterioComponent,
+        title: 'Ministerio — IDDP Norte Chico',
+      },
       {
         path: 'recursos',
         children: [
           { path: '', redirectTo: 'plan-estrategico', pathMatch: 'full' },
-          { path: 'plan-estrategico', component: PlanEstrategicoComponent, title: 'Plan Estratégico — IDDP Norte Chico' },
-          { path: 'plan-operativo', component: PlanOperativoComponent, title: 'Plan Operativo — IDDP Norte Chico' },
-          { path: 'accesos-adicionales', component: AccesosAdicionalesComponent, title: 'Accesos Adicionales — IDDP Norte Chico' },
+          {
+            path: 'plan-estrategico',
+            component: PlanEstrategicoComponent,
+            title: 'Plan Estratégico — IDDP Norte Chico',
+          },
+          {
+            path: 'plan-operativo',
+            component: PlanOperativoComponent,
+            title: 'Plan Operativo — IDDP Norte Chico',
+          },
+          {
+            path: 'accesos-adicionales',
+            component: AccesosAdicionalesComponent,
+            title: 'Accesos Adicionales — IDDP Norte Chico',
+          },
         ],
       },
       { path: 'ubicanos', component: UbicanosComponent, title: 'Ubícanos — IDDP Norte Chico' },
@@ -52,18 +84,25 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./features/admin/auth/login/login.component').then((m) => m.LoginComponent),
+        loadComponent: () =>
+          import('./features/admin/auth/login/login.component').then((m) => m.LoginComponent),
         title: 'Iniciar sesión — IDDP Admin',
       },
       {
         path: '',
-        loadComponent: () => import('./layout/admin/admin-shell/admin-shell.component').then((m) => m.AdminShellComponent),
+        loadComponent: () =>
+          import('./layout/admin/admin-shell/admin-shell.component').then(
+            (m) => m.AdminShellComponent,
+          ),
         canActivate: [authGuard],
         children: [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
             path: 'dashboard',
-            loadComponent: () => import('./features/admin/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+            loadComponent: () =>
+              import('./features/admin/dashboard/dashboard.component').then(
+                (m) => m.DashboardComponent,
+              ),
             title: 'Dashboard — IDDP Admin',
           },
           {
@@ -72,19 +111,25 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/distritos/distritos-list/distritos-list.component').then((m) => m.DistritosListComponent),
+                  import('./features/admin/distritos/distritos-list/distritos-list.component').then(
+                    (m) => m.DistritosListComponent,
+                  ),
                 title: 'Distritos — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/distritos/distrito-form/distrito-form.component').then((m) => m.DistritoFormComponent),
+                  import('./features/admin/distritos/distrito-form/distrito-form.component').then(
+                    (m) => m.DistritoFormComponent,
+                  ),
                 title: 'Nuevo Distrito — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/distritos/distrito-form/distrito-form.component').then((m) => m.DistritoFormComponent),
+                  import('./features/admin/distritos/distrito-form/distrito-form.component').then(
+                    (m) => m.DistritoFormComponent,
+                  ),
                 title: 'Editar Distrito — IDDP Admin',
               },
             ],
@@ -95,25 +140,33 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/iglesias/iglesias-list/iglesias-list.component').then((m) => m.IglesiasListComponent),
+                  import('./features/admin/iglesias/iglesias-list/iglesias-list.component').then(
+                    (m) => m.IglesiasListComponent,
+                  ),
                 title: 'Iglesias — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/iglesias/iglesia-form/iglesia-form.component').then((m) => m.IglesiaFormComponent),
+                  import('./features/admin/iglesias/iglesia-form/iglesia-form.component').then(
+                    (m) => m.IglesiaFormComponent,
+                  ),
                 title: 'Nueva Iglesia — IDDP Admin',
               },
               {
                 path: ':id',
                 loadComponent: () =>
-                  import('./features/admin/iglesias/iglesia-detail/iglesia-detail.component').then((m) => m.IglesiaDetailComponent),
+                  import('./features/admin/iglesias/iglesia-detail/iglesia-detail.component').then(
+                    (m) => m.IglesiaDetailComponent,
+                  ),
                 title: 'Detalle Iglesia — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/iglesias/iglesia-form/iglesia-form.component').then((m) => m.IglesiaFormComponent),
+                  import('./features/admin/iglesias/iglesia-form/iglesia-form.component').then(
+                    (m) => m.IglesiaFormComponent,
+                  ),
                 title: 'Editar Iglesia — IDDP Admin',
               },
             ],
@@ -124,19 +177,25 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/pastores/pastores-list/pastores-list.component').then((m) => m.PastoresListComponent),
+                  import('./features/admin/pastores/pastores-list/pastores-list.component').then(
+                    (m) => m.PastoresListComponent,
+                  ),
                 title: 'Pastores — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/pastores/pastor-form/pastor-form.component').then((m) => m.PastorFormComponent),
+                  import('./features/admin/pastores/pastor-form/pastor-form.component').then(
+                    (m) => m.PastorFormComponent,
+                  ),
                 title: 'Nuevo Pastor — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/pastores/pastor-form/pastor-form.component').then((m) => m.PastorFormComponent),
+                  import('./features/admin/pastores/pastor-form/pastor-form.component').then(
+                    (m) => m.PastorFormComponent,
+                  ),
                 title: 'Editar Pastor — IDDP Admin',
               },
             ],
@@ -147,19 +206,25 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/lideres/lideres-list/lideres-list.component').then((m) => m.LideresListComponent),
+                  import('./features/admin/lideres/lideres-list/lideres-list.component').then(
+                    (m) => m.LideresListComponent,
+                  ),
                 title: 'Líderes — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/lideres/lider-form/lider-form.component').then((m) => m.LiderFormComponent),
+                  import('./features/admin/lideres/lider-form/lider-form.component').then(
+                    (m) => m.LiderFormComponent,
+                  ),
                 title: 'Nuevo Líder — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/lideres/lider-form/lider-form.component').then((m) => m.LiderFormComponent),
+                  import('./features/admin/lideres/lider-form/lider-form.component').then(
+                    (m) => m.LiderFormComponent,
+                  ),
                 title: 'Editar Líder — IDDP Admin',
               },
             ],
@@ -215,13 +280,17 @@ export const routes: Routes = [
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/ministerios/ministerio-form/ministerio-form.component').then((m) => m.MinisterioFormComponent),
+                  import('./features/admin/ministerios/ministerio-form/ministerio-form.component').then(
+                    (m) => m.MinisterioFormComponent,
+                  ),
                 title: 'Nuevo Ministerio — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/ministerios/ministerio-form/ministerio-form.component').then((m) => m.MinisterioFormComponent),
+                  import('./features/admin/ministerios/ministerio-form/ministerio-form.component').then(
+                    (m) => m.MinisterioFormComponent,
+                  ),
                 title: 'Editar Ministerio — IDDP Admin',
               },
             ],
@@ -232,19 +301,25 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/eventos/eventos-list/eventos-list.component').then((m) => m.EventosListComponent),
+                  import('./features/admin/eventos/eventos-list/eventos-list.component').then(
+                    (m) => m.EventosListComponent,
+                  ),
                 title: 'Eventos — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/eventos/evento-form/evento-form.component').then((m) => m.EventoFormComponent),
+                  import('./features/admin/eventos/evento-form/evento-form.component').then(
+                    (m) => m.EventoFormComponent,
+                  ),
                 title: 'Nuevo Evento — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/eventos/evento-form/evento-form.component').then((m) => m.EventoFormComponent),
+                  import('./features/admin/eventos/evento-form/evento-form.component').then(
+                    (m) => m.EventoFormComponent,
+                  ),
                 title: 'Editar Evento — IDDP Admin',
               },
             ],
@@ -263,13 +338,17 @@ export const routes: Routes = [
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/comunicados/comunicado-form/comunicado-form.component').then((m) => m.ComunicadoFormComponent),
+                  import('./features/admin/comunicados/comunicado-form/comunicado-form.component').then(
+                    (m) => m.ComunicadoFormComponent,
+                  ),
                 title: 'Nuevo Comunicado — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/comunicados/comunicado-form/comunicado-form.component').then((m) => m.ComunicadoFormComponent),
+                  import('./features/admin/comunicados/comunicado-form/comunicado-form.component').then(
+                    (m) => m.ComunicadoFormComponent,
+                  ),
                 title: 'Editar Comunicado — IDDP Admin',
               },
             ],
@@ -280,19 +359,25 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./features/admin/usuarios/usuarios-list/usuarios-list.component').then((m) => m.UsuariosListComponent),
+                  import('./features/admin/usuarios/usuarios-list/usuarios-list.component').then(
+                    (m) => m.UsuariosListComponent,
+                  ),
                 title: 'Usuarios — IDDP Admin',
               },
               {
                 path: 'nuevo',
                 loadComponent: () =>
-                  import('./features/admin/usuarios/usuario-form/usuario-form.component').then((m) => m.UsuarioFormComponent),
+                  import('./features/admin/usuarios/usuario-form/usuario-form.component').then(
+                    (m) => m.UsuarioFormComponent,
+                  ),
                 title: 'Nuevo Usuario — IDDP Admin',
               },
               {
                 path: ':id/editar',
                 loadComponent: () =>
-                  import('./features/admin/usuarios/usuario-form/usuario-form.component').then((m) => m.UsuarioFormComponent),
+                  import('./features/admin/usuarios/usuario-form/usuario-form.component').then(
+                    (m) => m.UsuarioFormComponent,
+                  ),
                 title: 'Editar Usuario — IDDP Admin',
               },
             ],

@@ -23,7 +23,7 @@ export class AuthService {
    */
   checkAuth(): Observable<boolean> {
     return this.http.get<Usuario>(`${this.base}/me`).pipe(
-      tap(user => this._user.set(user)),
+      tap((user) => this._user.set(user)),
       map(() => true),
       catchError(() => {
         this._user.set(null);
@@ -35,7 +35,7 @@ export class AuthService {
   login(nombre: string, password: string): Observable<Usuario> {
     return this.http
       .post<Usuario>(`${this.base}/login`, { nombre, password })
-      .pipe(tap(user => this._user.set(user)));
+      .pipe(tap((user) => this._user.set(user)));
   }
 
   logout(): void {

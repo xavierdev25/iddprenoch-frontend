@@ -7,11 +7,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
   selector: 'app-button',
   standalone: true,
   template: `
-    <button
-      [type]="type()"
-      [disabled]="disabled()"
-      [class]="cls()"
-      (click)="clicked.emit($event)">
+    <button [type]="type()" [disabled]="disabled()" [class]="cls()" (click)="clicked.emit($event)">
       <ng-content />
     </button>
   `,

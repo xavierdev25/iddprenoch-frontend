@@ -15,7 +15,11 @@ export interface LightboxImage {
   template: `
     <app-modal [isOpen]="!!image()" size="lg" (closed)="closed.emit()">
       @if (image(); as img) {
-        <img [src]="img.src" [alt]="img.alt" class="w-full max-h-[65vh] object-contain rounded-lg bg-foreground/5" />
+        <img
+          [src]="img.src"
+          [alt]="img.alt"
+          class="w-full max-h-[65vh] object-contain rounded-lg bg-foreground/5"
+        />
         @if (img.caption) {
           <p class="text-sm font-medium text-foreground mt-4">{{ img.caption }}</p>
         }

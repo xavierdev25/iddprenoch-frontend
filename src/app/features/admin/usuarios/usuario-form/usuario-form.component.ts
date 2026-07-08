@@ -1,4 +1,10 @@
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -29,41 +35,77 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
   template: `
     <div class="max-w-lg">
       <div class="mb-6">
-        <a routerLink="/admin/usuarios" class="text-sm text-muted hover:text-primary transition-colors">← Volver</a>
+        <a
+          routerLink="/admin/usuarios"
+          class="text-sm text-muted hover:text-primary transition-colors"
+          >← Volver</a
+        >
         <h1 class="font-display text-2xl text-foreground mt-2">
           {{ isEditing() ? 'Editar usuario' : 'Nuevo usuario' }}
         </h1>
       </div>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="bg-surface border border-border rounded-xl p-6 space-y-4">
-        <app-input label="Nombre completo" [control]="form.controls.nombre" placeholder="Nombre del usuario" [required]="true" />
-        <app-input label="Email" [control]="form.controls.email" type="email" placeholder="usuario@iddp.pe" />
-        <app-select label="Rol" [control]="form.controls.rolId" [options]="rolOptions()" [required]="true" />
-        <app-select label="Estado" [control]="form.controls.estadoId" [options]="estadoOptions()" [required]="true" />
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="bg-surface border border-border rounded-xl p-6 space-y-4"
+      >
+        <app-input
+          label="Nombre completo"
+          [control]="form.controls.nombre"
+          placeholder="Nombre del usuario"
+          [required]="true"
+        />
+        <app-input
+          label="Email"
+          [control]="form.controls.email"
+          type="email"
+          placeholder="usuario@iddp.pe"
+        />
+        <app-select
+          label="Rol"
+          [control]="form.controls.rolId"
+          [options]="rolOptions()"
+          [required]="true"
+        />
+        <app-select
+          label="Estado"
+          [control]="form.controls.estadoId"
+          [options]="estadoOptions()"
+          [required]="true"
+        />
 
         @if (isEditing()) {
-          <p class="text-xs text-muted -mb-2">Deja estos campos en blanco para no cambiar la contraseña actual.</p>
+          <p class="text-xs text-muted -mb-2">
+            Deja estos campos en blanco para no cambiar la contraseña actual.
+          </p>
         }
         <app-input
           [label]="isEditing() ? 'Nueva contraseña' : 'Contraseña'"
           [control]="form.controls.password"
           type="password"
           placeholder="••••••••"
-          [required]="!isEditing()" />
+          [required]="!isEditing()"
+        />
         <app-input
           label="Confirmar contraseña"
           [control]="form.controls.confirmarPassword"
           type="password"
           placeholder="••••••••"
-          [required]="!isEditing()" />
+          [required]="!isEditing()"
+        />
 
         @if (error()) {
-          <div class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm">{{ error() }}</div>
+          <div class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+            {{ error() }}
+          </div>
         }
         <div class="flex gap-3 pt-2">
           <app-button type="submit" [disabled]="loading()">
-            {{ loading() ? 'Guardando…' : (isEditing() ? 'Guardar' : 'Crear usuario') }}
+            {{ loading() ? 'Guardando…' : isEditing() ? 'Guardar' : 'Crear usuario' }}
           </app-button>
-          <a routerLink="/admin/usuarios"><app-button variant="ghost" type="button">Cancelar</app-button></a>
+          <a routerLink="/admin/usuarios"
+            ><app-button variant="ghost" type="button">Cancelar</app-button></a
+          >
         </div>
       </form>
     </div>
@@ -89,15 +131,20 @@ export class UsuarioFormComponent implements OnInit {
   roles = toSignal(this.catalogosService.getRoles(), { initialValue: [] });
   estadosUsuario = toSignal(this.catalogosService.getEstadosUsuario(), { initialValue: [] });
 
-  rolOptions = () => this.roles().map(r => ({ value: r.id, label: r.nombre }));
-  estadoOptions = () => this.estadosUsuario().map(e => ({ value: e.id, label: e.nombre }));
+  rolOptions = () => this.roles().map((r) => ({ value: r.id, label: r.nombre }));
+  estadoOptions = () => this.estadosUsuario().map((e) => ({ value: e.id, label: e.nombre }));
 
   form = this.fb.nonNullable.group({
     nombre: ['', [Validators.required]],
     email: ['', [Validators.email]],
     rolId: [0, [Validators.required, Validators.min(1)]],
     estadoId: [1],
-    password: ['', this.isEditingMode ? [Validators.minLength(8)] : [Validators.required, Validators.minLength(8)]],
+    password: [
+      '',
+      this.isEditingMode
+        ? [Validators.minLength(8)]
+        : [Validators.required, Validators.minLength(8)],
+    ],
     confirmarPassword: [
       '',
       this.isEditingMode
@@ -117,24 +164,47 @@ export class UsuarioFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
       this.isEditing.set(true);
-      this.service.getById(Number(id)).subscribe(u => { if (u) this.form.patchValue(u); });
-      this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Usuarios', route: '/admin/usuarios' }, { label: 'Editar' }]);
+      this.service.getById(Number(id)).subscribe((u) => {
+        if (u) this.form.patchValue(u);
+      });
+      this.breadcrumb.set([
+        { label: 'Admin', route: '/admin/dashboard' },
+        { label: 'Usuarios', route: '/admin/usuarios' },
+        { label: 'Editar' },
+      ]);
     } else {
-      this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Usuarios', route: '/admin/usuarios' }, { label: 'Nuevo' }]);
+      this.breadcrumb.set([
+        { label: 'Admin', route: '/admin/dashboard' },
+        { label: 'Usuarios', route: '/admin/usuarios' },
+        { label: 'Nuevo' },
+      ]);
     }
   }
 
   submit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.loading.set(true);
     this.error.set('');
     const { confirmarPassword, ...raw } = this.form.getRawValue();
-    const data = stripEmptyStrings({ ...raw, rolId: Number(raw.rolId), estadoId: Number(raw.estadoId) });
+    const data = stripEmptyStrings({
+      ...raw,
+      rolId: Number(raw.rolId),
+      estadoId: Number(raw.estadoId),
+    });
     const id = this.route.snapshot.paramMap.get('id');
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
-      next: () => { this.loading.set(false); void this.router.navigate(['/admin/usuarios']); },
-      error: (err) => { this.loading.set(false); this.error.set(extractErrorMessage(err)); },
+      next: () => {
+        this.loading.set(false);
+        void this.router.navigate(['/admin/usuarios']);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(extractErrorMessage(err));
+      },
     });
   }
 }

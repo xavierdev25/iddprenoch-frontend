@@ -25,6 +25,6 @@ export class AdminShellComponent {
   sidebarOpen = signal(false);
 
   toggleSidebar(): void {
-    this.sidebarOpen.update(v => !v);
+    this.sidebarOpen.update((v) => !v);
   }
 }

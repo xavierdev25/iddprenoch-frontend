@@ -9,9 +9,7 @@ import { RecursosNavComponent } from '../shared/recursos-nav/recursos-nav.compon
     <div class="max-w-4xl mx-auto px-4 py-12">
       <div class="mb-8">
         <p class="text-primary text-sm font-medium tracking-widest uppercase mb-2">Recursos</p>
-        <h1 class="font-display text-4xl sm:text-5xl text-foreground mb-3">
-          Plan Estratégico
-        </h1>
+        <h1 class="font-display text-4xl sm:text-5xl text-foreground mb-3">Plan Estratégico</h1>
         <p class="text-muted max-w-xl leading-relaxed">
           El Plan Estratégico 2024–2028 de la IDDP Región Norte Chico establece la visión, objetivos
           y líneas de acción que guían el crecimiento de la región en los próximos años.
@@ -22,7 +20,9 @@ import { RecursosNavComponent } from '../shared/recursos-nav/recursos-nav.compon
 
       <div class="bg-surface border border-border rounded-xl p-8">
         <div class="flex items-start gap-4 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-2xl">
+          <div
+            class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-2xl"
+          >
             📋
           </div>
           <div>
@@ -49,11 +49,30 @@ import { RecursosNavComponent } from '../shared/recursos-nav/recursos-nav.compon
 })
 export class PlanEstrategicoComponent {
   readonly ejes = [
-    { titulo: 'Crecimiento espiritual', descripcion: 'Profundizar la vida devocional y el discipulado en todas las congregaciones.' },
-    { titulo: 'Multiplicación', descripcion: 'Abrir dos nuevas congregaciones en zonas sin alcance durante el período.' },
-    { titulo: 'Formación de líderes', descripcion: 'Capacitar a 50 líderes locales a través del instituto ministerial regional.' },
-    { titulo: 'Proyección social', descripcion: 'Ampliar los programas de asistencia comunitaria en los seis distritos.' },
-    { titulo: 'Tecnología y gestión', descripcion: 'Modernizar los sistemas de gestión para servir mejor a los congregantes.' },
-    { titulo: 'Unidad regional', descripcion: 'Fortalecer la identidad y el compañerismo entre todas las iglesias de la región.' },
+    {
+      titulo: 'Crecimiento espiritual',
+      descripcion: 'Profundizar la vida devocional y el discipulado en todas las congregaciones.',
+    },
+    {
+      titulo: 'Multiplicación',
+      descripcion: 'Abrir dos nuevas congregaciones en zonas sin alcance durante el período.',
+    },
+    {
+      titulo: 'Formación de líderes',
+      descripcion: 'Capacitar a 50 líderes locales a través del instituto ministerial regional.',
+    },
+    {
+      titulo: 'Proyección social',
+      descripcion: 'Ampliar los programas de asistencia comunitaria en los seis distritos.',
+    },
+    {
+      titulo: 'Tecnología y gestión',
+      descripcion: 'Modernizar los sistemas de gestión para servir mejor a los congregantes.',
+    },
+    {
+      titulo: 'Unidad regional',
+      descripcion:
+        'Fortalecer la identidad y el compañerismo entre todas las iglesias de la región.',
+    },
   ];
 }

@@ -1,16 +1,16 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background: #FAF9F6;
-  --color-foreground: #1C2321;
-  --color-primary: #0F6B5C;
-  --color-primary-hover: #0C5449;
-  --color-secondary: #C08A28;
-  --color-border: #E5E1D8;
-  --color-surface: #FFFFFF;
-  --color-muted: #6B7268;
-  --color-danger: #B3261E;
-  --color-success: #2D6A4F;
+  --color-background: #faf9f6;
+  --color-foreground: #1c2321;
+  --color-primary: #0f6b5c;
+  --color-primary-hover: #0c5449;
+  --color-secondary: #c08a28;
+  --color-border: #e5e1d8;
+  --color-surface: #ffffff;
+  --color-muted: #6b7268;
+  --color-danger: #b3261e;
+  --color-success: #2d6a4f;
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Newsreader', Georgia, serif;
@@ -36,7 +36,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
     font-weight: 500;
     line-height: 1.15;

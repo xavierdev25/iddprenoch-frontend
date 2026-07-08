@@ -18,31 +18,73 @@ import { ImageUploadComponent } from '../../../../shared/ui/image-upload/image-u
 @Component({
   selector: 'app-pastor-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, InputComponent, SelectComponent, ButtonComponent, ImageUploadComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    InputComponent,
+    SelectComponent,
+    ButtonComponent,
+    ImageUploadComponent,
+  ],
   template: `
     <div class="max-w-lg">
       <div class="mb-6">
-        <a routerLink="/admin/pastores" class="text-sm text-muted hover:text-primary transition-colors">← Volver</a>
+        <a
+          routerLink="/admin/pastores"
+          class="text-sm text-muted hover:text-primary transition-colors"
+          >← Volver</a
+        >
         <h1 class="font-display text-2xl text-foreground mt-2">
           {{ isEditing() ? 'Editar pastor' : 'Nuevo pastor' }}
         </h1>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="bg-surface border border-border rounded-xl p-6 space-y-4">
-        <app-input label="Nombre completo" [control]="form.controls.nombrePastor" placeholder="Pbro. Nombre Apellido" [required]="true" />
-        <app-select label="Iglesia" [control]="form.controls.iglesiaId" [options]="iglesiaOptions()" [required]="true" />
-        <app-select label="Cargo" [control]="form.controls.cargoId" [options]="cargoOptions()" [required]="true" />
-        <app-select label="Distrito (opcional)" [control]="form.controls.distritoId" [options]="distritoOptions()" placeholder="Sin distrito asignado" />
-        <app-input label="Celular (opcional)" [control]="form.controls.celular" type="tel" placeholder="987 654 321" />
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="bg-surface border border-border rounded-xl p-6 space-y-4"
+      >
+        <app-input
+          label="Nombre completo"
+          [control]="form.controls.nombrePastor"
+          placeholder="Pbro. Nombre Apellido"
+          [required]="true"
+        />
+        <app-select
+          label="Iglesia"
+          [control]="form.controls.iglesiaId"
+          [options]="iglesiaOptions()"
+          [required]="true"
+        />
+        <app-select
+          label="Cargo"
+          [control]="form.controls.cargoId"
+          [options]="cargoOptions()"
+          [required]="true"
+        />
+        <app-select
+          label="Distrito (opcional)"
+          [control]="form.controls.distritoId"
+          [options]="distritoOptions()"
+          placeholder="Sin distrito asignado"
+        />
+        <app-input
+          label="Celular (opcional)"
+          [control]="form.controls.celular"
+          type="tel"
+          placeholder="987 654 321"
+        />
         <app-image-upload label="Foto de perfil (opcional)" [control]="form.controls.foto" />
 
         @if (error()) {
-          <div class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm">{{ error() }}</div>
+          <div class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+            {{ error() }}
+          </div>
         }
 
         <div class="flex gap-3 pt-2">
           <app-button type="submit" [disabled]="loading()">
-            {{ loading() ? 'Guardando…' : (isEditing() ? 'Guardar cambios' : 'Crear pastor') }}
+            {{ loading() ? 'Guardando…' : isEditing() ? 'Guardar cambios' : 'Crear pastor' }}
           </app-button>
           <a routerLink="/admin/pastores">
             <app-button variant="ghost" type="button">Cancelar</app-button>
@@ -66,13 +108,19 @@ export class PastorFormComponent implements OnInit {
   loading = signal(false);
   error = signal('');
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
 
-  iglesiaOptions = () => this.iglesias().map(i => ({ value: i.id, label: i.nombre }));
-  cargoOptions = () => this.cargos().map(c => ({ value: c.id, label: c.nombre }));
-  distritoOptions = () => this.distritos().map(d => ({ value: d.id, label: d.nombre }));
+  iglesiaOptions = () => this.iglesias().map((i) => ({ value: i.id, label: i.nombre }));
+  cargoOptions = () => this.cargos().map((c) => ({ value: c.id, label: c.nombre }));
+  distritoOptions = () => this.distritos().map((d) => ({ value: d.id, label: d.nombre }));
 
   form = this.fb.nonNullable.group({
     nombrePastor: ['', [Validators.required]],
@@ -87,26 +135,48 @@ export class PastorFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
       this.isEditing.set(true);
-      this.service.getById(Number(id)).subscribe(p => {
+      this.service.getById(Number(id)).subscribe((p) => {
         if (p) this.form.patchValue(p);
       });
-      this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Pastores', route: '/admin/pastores' }, { label: 'Editar' }]);
+      this.breadcrumb.set([
+        { label: 'Admin', route: '/admin/dashboard' },
+        { label: 'Pastores', route: '/admin/pastores' },
+        { label: 'Editar' },
+      ]);
     } else {
-      this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Pastores', route: '/admin/pastores' }, { label: 'Nuevo' }]);
+      this.breadcrumb.set([
+        { label: 'Admin', route: '/admin/dashboard' },
+        { label: 'Pastores', route: '/admin/pastores' },
+        { label: 'Nuevo' },
+      ]);
     }
   }
 
   submit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.loading.set(true);
     this.error.set('');
     const raw = this.form.getRawValue();
-    const data = stripEmptyStrings({ ...raw, iglesiaId: Number(raw.iglesiaId), cargoId: Number(raw.cargoId), distritoId: raw.distritoId ? Number(raw.distritoId) : undefined });
+    const data = stripEmptyStrings({
+      ...raw,
+      iglesiaId: Number(raw.iglesiaId),
+      cargoId: Number(raw.cargoId),
+      distritoId: raw.distritoId ? Number(raw.distritoId) : undefined,
+    });
     const id = this.route.snapshot.paramMap.get('id');
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
-      next: () => { this.loading.set(false); void this.router.navigate(['/admin/pastores']); },
-      error: (err) => { this.loading.set(false); this.error.set(extractErrorMessage(err)); },
+      next: () => {
+        this.loading.set(false);
+        void this.router.navigate(['/admin/pastores']);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(extractErrorMessage(err));
+      },
     });
   }
 }

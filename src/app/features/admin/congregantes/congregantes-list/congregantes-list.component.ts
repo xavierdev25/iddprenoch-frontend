@@ -26,18 +26,36 @@ import { Congregante } from '../../../../core/models';
         <a routerLink="/admin/congregantes/nuevo"><app-button>+ Nuevo congregante</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns()" [data]="congregantes()" [showView]="true" [compact]="true"
+        <app-table
+          [columns]="columns()"
+          [data]="congregantes()"
+          [showView]="true"
+          [compact]="true"
           emptyIcon="👥"
           emptyMessage="Aún no hay congregantes registrados"
           emptyHint="Usa el botón “+ Nuevo congregante” para agregar el primero."
           (view)="onView($any($event))"
           (edit)="onEdit($any($event))"
-          (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
-    <app-modal [isOpen]="deleteModal()" title="Eliminar congregante" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar a <strong class="text-foreground">{{ toDelete()?.nombre }} {{ toDelete()?.apellido }}</strong>?</p>
+    <app-modal
+      [isOpen]="deleteModal()"
+      title="Eliminar congregante"
+      (closed)="deleteModal.set(false)"
+    >
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar a
+        <strong class="text-foreground">{{ toDelete()?.nombre }} {{ toDelete()?.apellido }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -56,7 +74,9 @@ export class CongregantesListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   estadosEclesiales = toSignal(this.catalogosService.getEstadosEclesiales(), { initialValue: [] });
   deleteModal = signal(false);
   toDelete = signal<Congregante | null>(null);
@@ -65,18 +85,26 @@ export class CongregantesListComponent implements OnInit {
     const igs = this.iglesias();
     const estados = this.estadosEclesiales();
     return [
-      { key: 'foto', header: 'Foto', image: row => ({ src: row['foto'], label: `${row['nombre']} ${row['apellido']}` }) },
+      {
+        key: 'foto',
+        header: 'Foto',
+        image: (row) => ({ src: row['foto'], label: `${row['nombre']} ${row['apellido']}` }),
+      },
       { key: 'dni', header: 'DNI' },
-      { key: 'nombre', header: 'Nombre', render: row => `${row['nombre']} ${row['apellido']}` },
-      { key: 'iglesiaId', header: 'Iglesia', render: row => igs.find(i => i.id === row['iglesiaId'])?.nombre ?? '—' },
-      { key: 'telefono', header: 'Teléfono', render: row => String(row['telefono'] ?? '—') },
+      { key: 'nombre', header: 'Nombre', render: (row) => `${row['nombre']} ${row['apellido']}` },
+      {
+        key: 'iglesiaId',
+        header: 'Iglesia',
+        render: (row) => igs.find((i) => i.id === row['iglesiaId'])?.nombre ?? '—',
+      },
+      { key: 'telefono', header: 'Teléfono', render: (row) => String(row['telefono'] ?? '—') },
       {
         key: 'estadoEclesialId',
         header: 'Estado',
-        badge: row => {
+        badge: (row) => {
           const id = Number(row['estadoEclesialId']);
-          const text = estados.find(e => e.id === id)?.nombre ?? '—';
-          return { text, color: id === 1 ? 'green' as const : 'gray' as const };
+          const text = estados.find((e) => e.id === id)?.nombre ?? '—';
+          return { text, color: id === 1 ? ('green' as const) : ('gray' as const) };
         },
       },
     ];
@@ -88,7 +116,7 @@ export class CongregantesListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.congregantes.set(r.data);
       this.total.set(r.total);
     });
@@ -99,9 +127,16 @@ export class CongregantesListComponent implements OnInit {
     this.load();
   }
 
-  onView(c: Congregante): void { window.location.href = `/admin/congregantes/${c.id}`; }
-  onEdit(c: Congregante): void { window.location.href = `/admin/congregantes/${c.id}/editar`; }
-  confirmDelete(c: Congregante): void { this.toDelete.set(c); this.deleteModal.set(true); }
+  onView(c: Congregante): void {
+    window.location.href = `/admin/congregantes/${c.id}`;
+  }
+  onEdit(c: Congregante): void {
+    window.location.href = `/admin/congregantes/${c.id}/editar`;
+  }
+  confirmDelete(c: Congregante): void {
+    this.toDelete.set(c);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const c = this.toDelete();
     if (!c) return;

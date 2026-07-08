@@ -28,7 +28,7 @@ export class LideresService {
 
   getByMinisterio(ministerioId: number): Observable<Lider[]> {
     return this.getAll({ limit: 100 }).pipe(
-      map(r => r.data.filter(l => l.ministerioId === ministerioId)),
+      map((r) => r.data.filter((l) => l.ministerioId === ministerioId)),
     );
   }
 
@@ -37,7 +37,9 @@ export class LideresService {
    * ÚNICO que debe usarse en la página pública /liderazgo/:slug.
    */
   getPublicByMinisterioSlug(slug: string): Observable<LiderPublico[]> {
-    return this.http.get<LiderPublico[]>(`${environment.apiUrl}/ministerios/${slug}/lideres-publico`);
+    return this.http.get<LiderPublico[]>(
+      `${environment.apiUrl}/ministerios/${slug}/lideres-publico`,
+    );
   }
 
   getById(id: number): Observable<Lider> {

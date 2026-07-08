@@ -8,8 +8,8 @@ import { Component, HostListener, computed, input, output } from '@angular/core'
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
           class="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
-          (click)="closed.emit()">
-        </div>
+          (click)="closed.emit()"
+        ></div>
         <div class="relative z-10 bg-surface rounded-xl shadow-2xl w-full" [class]="sizeClass()">
           <div class="flex items-center justify-between p-6 border-b border-border">
             <h2 class="font-display text-xl font-semibold text-foreground">{{ title() }}</h2>
@@ -17,9 +17,15 @@ import { Component, HostListener, computed, input, output } from '@angular/core'
               type="button"
               class="text-muted hover:text-foreground transition-colors p-1 rounded"
               aria-label="Cerrar"
-              (click)="closed.emit()">
+              (click)="closed.emit()"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>

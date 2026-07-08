@@ -9,5 +9,5 @@ export const authGuard: CanActivateFn = () => {
 
   // La cookie httpOnly no es legible desde el cliente, así que la única forma
   // de confirmar la sesión es preguntarle al backend (GET /auth/me).
-  return auth.checkAuth().pipe(map(ok => (ok ? true : router.createUrlTree(['/admin/login']))));
+  return auth.checkAuth().pipe(map((ok) => (ok ? true : router.createUrlTree(['/admin/login']))));
 };

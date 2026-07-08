@@ -19,10 +19,7 @@ interface NavItem {
   template: `
     <!-- Overlay mobile -->
     @if (isOpen()) {
-      <div
-        class="fixed inset-0 z-20 bg-foreground/40 lg:hidden"
-        (click)="toggle.emit()">
-      </div>
+      <div class="fixed inset-0 z-20 bg-foreground/40 lg:hidden" (click)="toggle.emit()"></div>
     }
 
     <!-- Sidebar -->
@@ -30,12 +27,14 @@ interface NavItem {
       class="fixed inset-y-0 left-0 z-30 w-60 h-screen bg-foreground text-surface/80 flex flex-col transform transition-transform duration-200
              lg:static lg:translate-x-0 lg:z-auto"
       [class.translate-x-0]="isOpen()"
-      [class.-translate-x-full]="!isOpen()">
-
+      [class.-translate-x-full]="!isOpen()"
+    >
       <!-- Logo -->
       <div class="px-4 py-4 border-b border-surface/10 shrink-0">
         <a routerLink="/admin/dashboard" class="flex items-center gap-2.5">
-          <div class="w-7 h-7 rounded bg-primary flex items-center justify-center text-white font-display font-bold text-xs">
+          <div
+            class="w-7 h-7 rounded bg-primary flex items-center justify-center text-white font-display font-bold text-xs"
+          >
             I
           </div>
           <div class="leading-tight">
@@ -59,7 +58,8 @@ interface NavItem {
                     [routerLink]="item.route"
                     routerLinkActive="bg-primary/90 text-white"
                     [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
-                    class="flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors hover:bg-surface/10">
+                    class="flex items-center gap-2.5 px-2.5 py-2 rounded text-sm transition-colors hover:bg-surface/10"
+                  >
                     <span class="text-base leading-none">{{ item.icon }}</span>
                     {{ item.label }}
                   </a>
@@ -74,10 +74,15 @@ interface NavItem {
       <div class="px-4 py-3 border-t border-surface/10 shrink-0">
         <a
           routerLink="/"
-          class="flex items-center gap-2 text-xs text-surface/40 hover:text-surface/70 transition-colors">
+          class="flex items-center gap-2 text-xs text-surface/40 hover:text-surface/70 transition-colors"
+        >
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
           </svg>
           Ver sitio público
         </a>
@@ -92,9 +97,7 @@ export class AdminSidebarComponent {
   readonly sections: NavSection[] = [
     {
       label: 'General',
-      items: [
-        { label: 'Dashboard', route: '/admin/dashboard', icon: '📊' },
-      ],
+      items: [{ label: 'Dashboard', route: '/admin/dashboard', icon: '📊' }],
     },
     {
       label: 'Organización',
@@ -113,9 +116,7 @@ export class AdminSidebarComponent {
     },
     {
       label: 'Ministerios',
-      items: [
-        { label: 'Ministerios', route: '/admin/ministerios', icon: '✝️' },
-      ],
+      items: [{ label: 'Ministerios', route: '/admin/ministerios', icon: '✝️' }],
     },
     {
       label: 'Contenido',
@@ -126,9 +127,7 @@ export class AdminSidebarComponent {
     },
     {
       label: 'Sistema',
-      items: [
-        { label: 'Usuarios', route: '/admin/usuarios', icon: '🔐' },
-      ],
+      items: [{ label: 'Usuarios', route: '/admin/usuarios', icon: '🔐' }],
     },
   ];
 }

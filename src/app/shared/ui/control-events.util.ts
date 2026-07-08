@@ -13,8 +13,5 @@ import { switchMap } from 'rxjs';
  * returned signal at the top of any `computed()` that reads the control's mutable state.
  */
 export function controlEvents(control: Signal<FormControl>) {
-  return toSignal(
-    toObservable(control).pipe(switchMap((c) => c.events)),
-    { initialValue: null },
-  );
+  return toSignal(toObservable(control).pipe(switchMap((c) => c.events)), { initialValue: null });
 }

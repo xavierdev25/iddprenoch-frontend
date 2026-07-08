@@ -4,10 +4,7 @@ import { Component, computed, input, output } from '@angular/core';
   selector: 'app-chip',
   standalone: true,
   template: `
-    <button
-      type="button"
-      [class]="cls()"
-      (click)="selected.emit()">
+    <button type="button" [class]="cls()" (click)="selected.emit()">
       <ng-content />
     </button>
   `,

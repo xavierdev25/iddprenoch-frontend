@@ -23,9 +23,9 @@ export class EventosService {
   getProximos(limit = 4): Observable<Evento[]> {
     const now = new Date().toISOString();
     return this.getAll({ limit: 100 }).pipe(
-      map(r =>
+      map((r) =>
         r.data
-          .filter(e => e.fechaConHora >= now)
+          .filter((e) => e.fechaConHora >= now)
           .sort((a, b) => a.fechaConHora.localeCompare(b.fechaConHora))
           .slice(0, limit),
       ),

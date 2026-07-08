@@ -14,7 +14,9 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
       <div class="w-full max-w-sm">
         <!-- Brand -->
         <div class="text-center mb-8">
-          <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white font-display font-bold text-xl mx-auto mb-3">
+          <div
+            class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white font-display font-bold text-xl mx-auto mb-3"
+          >
             I
           </div>
           <h1 class="font-display text-2xl text-foreground">Panel Administrativo</h1>
@@ -22,31 +24,36 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
         </div>
 
         <!-- Form -->
-        <form [formGroup]="form" (ngSubmit)="submit()" class="bg-surface border border-border rounded-xl p-6 space-y-4 shadow-sm">
+        <form
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          class="bg-surface border border-border rounded-xl p-6 space-y-4 shadow-sm"
+        >
           <app-input
             label="Usuario"
             [control]="form.controls.nombre"
             type="text"
             placeholder="admin"
-            [required]="true" />
+            [required]="true"
+          />
 
           <app-input
             label="Contraseña"
             [control]="form.controls.password"
             type="password"
             placeholder="••••••••"
-            [required]="true" />
+            [required]="true"
+          />
 
           @if (error()) {
-            <div class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+            <div
+              class="px-3 py-2.5 rounded bg-danger/10 border border-danger/20 text-danger text-sm"
+            >
               {{ error() }}
             </div>
           }
 
-          <app-button
-            type="submit"
-            [disabled]="loading()"
-            class="w-full">
+          <app-button type="submit" [disabled]="loading()" class="w-full">
             {{ loading() ? 'Verificando…' : 'Iniciar sesión' }}
           </app-button>
         </form>
@@ -57,9 +64,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
           </a>
         </div>
 
-        <p class="text-center text-xs text-muted mt-6 opacity-50">
-          Demo: admin / admin123
-        </p>
+        <p class="text-center text-xs text-muted mt-6 opacity-50">Demo: admin / admin123</p>
       </div>
     </div>
   `,

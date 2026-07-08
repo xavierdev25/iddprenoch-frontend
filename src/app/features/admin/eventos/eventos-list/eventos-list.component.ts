@@ -22,16 +22,28 @@ import { Evento } from '../../../../core/models';
         <a routerLink="/admin/eventos/nuevo"><app-button>+ Nuevo evento</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns" [data]="eventos()"
+        <app-table
+          [columns]="columns"
+          [data]="eventos()"
           emptyIcon="📅"
           emptyMessage="Aún no hay eventos registrados"
           emptyHint="Usa el botón “+ Nuevo evento” para agregar el primero."
-          (edit)="onEdit($any($event))" (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (edit)="onEdit($any($event))"
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
     <app-modal [isOpen]="deleteModal()" title="Eliminar evento" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar el evento <strong class="text-foreground">{{ toDelete()?.nombre }}</strong>?</p>
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar el evento <strong class="text-foreground">{{ toDelete()?.nombre }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -52,16 +64,25 @@ export class EventosListComponent implements OnInit {
   toDelete = signal<Evento | null>(null);
 
   readonly columns: TableColumn[] = [
-    { key: 'imagen', header: 'Foto', image: row => ({ src: row['imagen'], label: String(row['nombre']) }) },
+    {
+      key: 'imagen',
+      header: 'Foto',
+      image: (row) => ({ src: row['imagen'], label: String(row['nombre']) }),
+    },
     { key: 'nombre', header: 'Evento' },
-    { key: 'fechaConHora', header: 'Fecha y hora', render: row => new Date(String(row['fechaConHora'])).toLocaleString('es-PE') },
-    { key: 'ubicacion', header: 'Ubicación', render: row => String(row['ubicacion'] ?? '—') },
+    {
+      key: 'fechaConHora',
+      header: 'Fecha y hora',
+      render: (row) => new Date(String(row['fechaConHora'])).toLocaleString('es-PE'),
+    },
+    { key: 'ubicacion', header: 'Ubicación', render: (row) => String(row['ubicacion'] ?? '—') },
     {
       key: 'estado',
       header: 'Estado',
-      badge: row => (new Date(String(row['fechaConHora'])) >= new Date()
-        ? { text: 'Próximo', color: 'green' }
-        : { text: 'Pasado', color: 'gray' }),
+      badge: (row) =>
+        new Date(String(row['fechaConHora'])) >= new Date()
+          ? { text: 'Próximo', color: 'green' }
+          : { text: 'Pasado', color: 'gray' },
     },
   ];
 
@@ -71,7 +92,7 @@ export class EventosListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.eventos.set(r.data);
       this.total.set(r.total);
     });
@@ -82,8 +103,13 @@ export class EventosListComponent implements OnInit {
     this.load();
   }
 
-  onEdit(e: Evento): void { window.location.href = `/admin/eventos/${e.id}/editar`; }
-  confirmDelete(e: Evento): void { this.toDelete.set(e); this.deleteModal.set(true); }
+  onEdit(e: Evento): void {
+    window.location.href = `/admin/eventos/${e.id}/editar`;
+  }
+  confirmDelete(e: Evento): void {
+    this.toDelete.set(e);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const e = this.toDelete();
     if (!e) return;

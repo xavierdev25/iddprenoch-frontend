@@ -15,12 +15,32 @@ interface MinisterioAccent {
 const ACCENTS: Record<string, MinisterioAccent> = {
   mujer: { bg: 'bg-rose-500/10', text: 'text-rose-600', border: 'border-t-rose-400', icon: '🌷' },
   varones: { bg: 'bg-blue-500/10', text: 'text-blue-600', border: 'border-t-blue-400', icon: '🛡️' },
-  jovenes: { bg: 'bg-secondary/10', text: 'text-secondary', border: 'border-t-secondary', icon: '🔥' },
-  infantil: { bg: 'bg-amber-500/10', text: 'text-amber-600', border: 'border-t-amber-400', icon: '⭐' },
-  musica: { bg: 'bg-violet-500/10', text: 'text-violet-600', border: 'border-t-violet-400', icon: '🎵' },
+  jovenes: {
+    bg: 'bg-secondary/10',
+    text: 'text-secondary',
+    border: 'border-t-secondary',
+    icon: '🔥',
+  },
+  infantil: {
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-600',
+    border: 'border-t-amber-400',
+    icon: '⭐',
+  },
+  musica: {
+    bg: 'bg-violet-500/10',
+    text: 'text-violet-600',
+    border: 'border-t-violet-400',
+    icon: '🎵',
+  },
   social: { bg: 'bg-success/10', text: 'text-success', border: 'border-t-success', icon: '🤲' },
 };
-const DEFAULT_ACCENT: MinisterioAccent = { bg: 'bg-primary/10', text: 'text-primary', border: 'border-t-primary', icon: '✝️' };
+const DEFAULT_ACCENT: MinisterioAccent = {
+  bg: 'bg-primary/10',
+  text: 'text-primary',
+  border: 'border-t-primary',
+  icon: '✝️',
+};
 
 @Component({
   selector: 'app-ministerio',
@@ -29,11 +49,19 @@ const DEFAULT_ACCENT: MinisterioAccent = { bg: 'bg-primary/10', text: 'text-prim
     <div class="max-w-5xl mx-auto px-4 py-12">
       @if (ministerio(); as m) {
         <div class="mb-10 flex items-start gap-5">
-          <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0" [class]="accent(m.slug).bg">
+          <div
+            class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0"
+            [class]="accent(m.slug).bg"
+          >
             {{ accent(m.slug).icon }}
           </div>
           <div>
-            <p class="text-sm font-medium tracking-widest uppercase mb-2" [class]="accent(m.slug).text">Liderazgo</p>
+            <p
+              class="text-sm font-medium tracking-widest uppercase mb-2"
+              [class]="accent(m.slug).text"
+            >
+              Liderazgo
+            </p>
             <h1 class="font-display text-4xl sm:text-5xl text-foreground mb-3">
               {{ m.nombre }}
             </h1>
@@ -53,14 +81,32 @@ const DEFAULT_ACCENT: MinisterioAccent = { bg: 'bg-primary/10', text: 'text-prim
           } @else {
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               @for (lider of lideres(); track lider.id) {
-                <div class="bg-surface border border-border rounded-lg p-4 border-t-[3px]" [class]="accent(m.slug).border">
-                  <div class="w-9 h-9 rounded-full flex items-center justify-center mb-3" [class]="accent(m.slug).bg">
-                    <svg class="w-5 h-5" [class]="accent(m.slug).text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <div
+                  class="bg-surface border border-border rounded-lg p-4 border-t-[3px]"
+                  [class]="accent(m.slug).border"
+                >
+                  <div
+                    class="w-9 h-9 rounded-full flex items-center justify-center mb-3"
+                    [class]="accent(m.slug).bg"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      [class]="accent(m.slug).text"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
                     </svg>
                   </div>
-                  <h3 class="font-semibold text-foreground text-sm">{{ lider.nombre }} {{ lider.apellido }}</h3>
+                  <h3 class="font-semibold text-foreground text-sm">
+                    {{ lider.nombre }} {{ lider.apellido }}
+                  </h3>
                 </div>
               }
             </div>
@@ -92,11 +138,11 @@ export class MinisterioComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.add(
-      this.route.paramMap.subscribe(params => {
+      this.route.paramMap.subscribe((params) => {
         const slug = params.get('slug') ?? '';
         this.cargando.set(true);
         this.ministeriosService.getBySlug(slug).subscribe({
-          next: m => {
+          next: (m) => {
             this.ministerio.set(m);
             this.cargando.set(false);
           },
@@ -108,7 +154,7 @@ export class MinisterioComponent implements OnInit, OnDestroy {
         // Página pública: usar SIEMPRE el endpoint reducido de líderes
         // (sin dni/telefono/correo, sin sesión). Nunca /api/lideres aquí.
         this.lideresService.getPublicByMinisterioSlug(slug).subscribe({
-          next: list => this.lideres.set(list),
+          next: (list) => this.lideres.set(list),
           error: () => this.lideres.set([]),
         });
       }),

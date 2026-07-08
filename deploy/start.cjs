@@ -14,22 +14,27 @@ function log(msg) {
 
 log('start.cjs: iniciando...');
 
-import('./server.mjs').then((mod) => {
-  log('start.cjs: server.mjs cargado correctamente');
-  const app = mod.reqHandler;
-  if (!app) {
-    log('start.cjs: ERROR - mod.reqHandler es undefined. Exports disponibles: ' + Object.keys(mod).join(', '));
+import('./server.mjs')
+  .then((mod) => {
+    log('start.cjs: server.mjs cargado correctamente');
+    const app = mod.reqHandler;
+    if (!app) {
+      log(
+        'start.cjs: ERROR - mod.reqHandler es undefined. Exports disponibles: ' +
+          Object.keys(mod).join(', '),
+      );
+      process.exit(1);
+    }
+    const port = process.env.PORT || 4000;
+    log(`start.cjs: intentando escuchar en el puerto ${port}...`);
+    app.listen(port, () => {
+      log(`start.cjs: escuchando correctamente en el puerto ${port}`);
+    });
+  })
+  .catch((err) => {
+    log('start.cjs: ERROR al cargar/arrancar - ' + (err && err.stack ? err.stack : String(err)));
     process.exit(1);
-  }
-  const port = process.env.PORT || 4000;
-  log(`start.cjs: intentando escuchar en el puerto ${port}...`);
-  app.listen(port, () => {
-    log(`start.cjs: escuchando correctamente en el puerto ${port}`);
   });
-}).catch((err) => {
-  log('start.cjs: ERROR al cargar/arrancar - ' + (err && err.stack ? err.stack : String(err)));
-  process.exit(1);
-});
 
 process.on('uncaughtException', (err) => {
   log('start.cjs: uncaughtException - ' + (err && err.stack ? err.stack : String(err)));

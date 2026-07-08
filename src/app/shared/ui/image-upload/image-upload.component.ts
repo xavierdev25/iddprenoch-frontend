@@ -13,7 +13,9 @@ let counter = 0;
     <div class="flex flex-col gap-1.5">
       <label [for]="id" class="text-sm font-medium text-foreground">{{ label() }}</label>
       <div class="flex items-center gap-4">
-        <div class="w-20 h-20 rounded-lg overflow-hidden border border-border shrink-0 bg-background flex items-center justify-center">
+        <div
+          class="w-20 h-20 rounded-lg overflow-hidden border border-border shrink-0 bg-background flex items-center justify-center"
+        >
           @if (preview(); as p) {
             <img [src]="p" [alt]="label()" class="w-full h-full object-cover" />
           } @else {
@@ -28,7 +30,8 @@ let counter = 0;
             (change)="onFileChange($event)"
             class="text-xs text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0
                    file:bg-primary/10 file:text-primary file:text-xs file:font-medium file:cursor-pointer
-                   hover:file:bg-primary/20 cursor-pointer" />
+                   hover:file:bg-primary/20 cursor-pointer"
+          />
           <p class="text-[11px] text-muted">JPG, PNG o WEBP. Máximo 5MB.</p>
           @if (error()) {
             <p class="text-xs text-danger">{{ error() }}</p>

@@ -17,12 +17,14 @@ import { getAvatarGradient, getInitials } from '../../../core/utils/avatar.util'
         [alt]="alt()"
         class="w-full h-full object-cover"
         [class.cursor-pointer]="clickable()"
-        (click)="onClick()" />
+        (click)="onClick()"
+      />
     } @else {
       <div
         class="w-full h-full flex items-center justify-center text-white font-semibold select-none"
         [style.background]="gradient()"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         {{ initials() }}
       </div>
     }

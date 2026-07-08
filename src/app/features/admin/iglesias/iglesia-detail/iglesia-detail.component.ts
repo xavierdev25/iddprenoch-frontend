@@ -20,7 +20,10 @@ import { googleMapsUrl } from '../../../../core/utils/maps.util';
       <div>
         <div class="flex items-start justify-between mb-6 gap-4">
           <div>
-            <a routerLink="/admin/iglesias" class="text-sm text-muted hover:text-primary transition-colors">
+            <a
+              routerLink="/admin/iglesias"
+              class="text-sm text-muted hover:text-primary transition-colors"
+            >
               ← Volver a Iglesias
             </a>
             <h1 class="font-display text-2xl text-foreground mt-2">{{ i.nombre }}</h1>
@@ -36,13 +39,29 @@ import { googleMapsUrl } from '../../../../core/utils/maps.util';
             <h2 class="font-semibold text-foreground text-sm">Información</h2>
             <div class="text-sm text-muted space-y-2">
               <p><span class="font-medium text-foreground">Dirección:</span> {{ i.direccion }}</p>
-              <p><span class="font-medium text-foreground">Distrito:</span> {{ distritoNombre(i.distritoId) }}</p>
-              <a [href]="googleMapsUrl(i)" target="_blank" rel="noopener noreferrer"
-                 class="inline-flex items-center gap-1 text-primary hover:underline">
+              <p>
+                <span class="font-medium text-foreground">Distrito:</span>
+                {{ distritoNombre(i.distritoId) }}
+              </p>
+              <a
+                [href]="googleMapsUrl(i)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1 text-primary hover:underline"
+              >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
                 Ver ubicación en Google Maps
               </a>
@@ -71,7 +90,11 @@ import { googleMapsUrl } from '../../../../core/utils/maps.util';
     } @else {
       <div class="py-20 text-center">
         <p class="text-muted">Iglesia no encontrada.</p>
-        <a routerLink="/admin/iglesias" class="text-primary hover:underline text-sm mt-2 inline-block">← Volver</a>
+        <a
+          routerLink="/admin/iglesias"
+          class="text-primary hover:underline text-sm mt-2 inline-block"
+          >← Volver</a
+        >
       </div>
     }
   `,
@@ -88,19 +111,25 @@ export class IglesiaDetailComponent implements OnInit {
 
   iglesia = signal<Iglesia | null>(null);
   cargando = signal(true);
-  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  pastores = toSignal(this.pastoresService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  pastores = toSignal(this.pastoresService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
 
   get pastoresIglesia() {
     const id = this.iglesia()?.id;
-    return () => this.pastores().filter(p => p.iglesiaId === id);
+    return () => this.pastores().filter((p) => p.iglesiaId === id);
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
-      this.iglesiasService.getById(Number(id)).subscribe(i => {
+      this.iglesiasService.getById(Number(id)).subscribe((i) => {
         this.iglesia.set(i ?? null);
         this.cargando.set(false);
         this.breadcrumb.set([
@@ -113,10 +142,10 @@ export class IglesiaDetailComponent implements OnInit {
   }
 
   distritoNombre(id: number): string {
-    return this.distritos().find(d => d.id === id)?.nombre ?? '—';
+    return this.distritos().find((d) => d.id === id)?.nombre ?? '—';
   }
 
   cargoNombre(id: number): string {
-    return this.cargos().find(c => c.id === id)?.nombre ?? '—';
+    return this.cargos().find((c) => c.id === id)?.nombre ?? '—';
   }
 }

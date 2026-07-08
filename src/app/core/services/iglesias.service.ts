@@ -22,7 +22,7 @@ export class IglesiasService {
    */
   getByDistrito(distritoId: number): Observable<Iglesia[]> {
     return this.getAll({ limit: 100 }).pipe(
-      map(r => r.data.filter(i => i.distritoId === distritoId)),
+      map((r) => r.data.filter((i) => i.distritoId === distritoId)),
     );
   }
 

@@ -22,16 +22,32 @@ import { Ministerio } from '../../../../core/models';
         <a routerLink="/admin/ministerios/nuevo"><app-button>+ Nuevo ministerio</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns" [data]="ministerios()"
+        <app-table
+          [columns]="columns"
+          [data]="ministerios()"
           emptyIcon="✝️"
           emptyMessage="Aún no hay ministerios registrados"
           emptyHint="Usa el botón “+ Nuevo ministerio” para agregar el primero."
-          (edit)="onEdit($any($event))" (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (edit)="onEdit($any($event))"
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
-    <app-modal [isOpen]="deleteModal()" title="Eliminar ministerio" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar el ministerio <strong class="text-foreground">{{ toDelete()?.nombre }}</strong>?</p>
+    <app-modal
+      [isOpen]="deleteModal()"
+      title="Eliminar ministerio"
+      (closed)="deleteModal.set(false)"
+    >
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar el ministerio <strong class="text-foreground">{{ toDelete()?.nombre }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -53,8 +69,15 @@ export class MinisteriosListComponent implements OnInit {
 
   readonly columns: TableColumn[] = [
     { key: 'nombre', header: 'Nombre' },
-    { key: 'slug', header: 'Slug (URL)', render: row => String(row['slug'] ?? '—') },
-    { key: 'descripcion', header: 'Descripción', render: row => { const d = String(row['descripcion'] ?? ''); return d.length > 60 ? d.slice(0, 60) + '…' : d; } },
+    { key: 'slug', header: 'Slug (URL)', render: (row) => String(row['slug'] ?? '—') },
+    {
+      key: 'descripcion',
+      header: 'Descripción',
+      render: (row) => {
+        const d = String(row['descripcion'] ?? '');
+        return d.length > 60 ? d.slice(0, 60) + '…' : d;
+      },
+    },
   ];
 
   ngOnInit(): void {
@@ -63,7 +86,7 @@ export class MinisteriosListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.ministerios.set(r.data);
       this.total.set(r.total);
     });
@@ -74,8 +97,13 @@ export class MinisteriosListComponent implements OnInit {
     this.load();
   }
 
-  onEdit(m: Ministerio): void { window.location.href = `/admin/ministerios/${m.id}/editar`; }
-  confirmDelete(m: Ministerio): void { this.toDelete.set(m); this.deleteModal.set(true); }
+  onEdit(m: Ministerio): void {
+    window.location.href = `/admin/ministerios/${m.id}/editar`;
+  }
+  confirmDelete(m: Ministerio): void {
+    this.toDelete.set(m);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const m = this.toDelete();
     if (!m) return;

@@ -22,16 +22,32 @@ import { Comunicado } from '../../../../core/models';
         <a routerLink="/admin/comunicados/nuevo"><app-button>+ Nuevo comunicado</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns" [data]="comunicados()"
+        <app-table
+          [columns]="columns"
+          [data]="comunicados()"
           emptyIcon="📢"
           emptyMessage="Aún no hay comunicados publicados"
           emptyHint="Usa el botón “+ Nuevo comunicado” para publicar el primero."
-          (edit)="onEdit($any($event))" (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (edit)="onEdit($any($event))"
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
-    <app-modal [isOpen]="deleteModal()" title="Eliminar comunicado" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar <strong class="text-foreground">{{ toDelete()?.titulo }}</strong>?</p>
+    <app-modal
+      [isOpen]="deleteModal()"
+      title="Eliminar comunicado"
+      (closed)="deleteModal.set(false)"
+    >
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar <strong class="text-foreground">{{ toDelete()?.titulo }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -52,9 +68,20 @@ export class ComunicadosListComponent implements OnInit {
   toDelete = signal<Comunicado | null>(null);
 
   readonly columns: TableColumn[] = [
-    { key: 'imagen', header: 'Foto', image: row => ({ src: row['imagen'], label: String(row['titulo']) }) },
+    {
+      key: 'imagen',
+      header: 'Foto',
+      image: (row) => ({ src: row['imagen'], label: String(row['titulo']) }),
+    },
     { key: 'titulo', header: 'Título' },
-    { key: 'descripcion', header: 'Descripción', render: row => { const d = String(row['descripcion'] ?? ''); return d.length > 70 ? d.slice(0, 70) + '…' : (d || '—'); } },
+    {
+      key: 'descripcion',
+      header: 'Descripción',
+      render: (row) => {
+        const d = String(row['descripcion'] ?? '');
+        return d.length > 70 ? d.slice(0, 70) + '…' : d || '—';
+      },
+    },
   ];
 
   ngOnInit(): void {
@@ -63,7 +90,7 @@ export class ComunicadosListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.comunicados.set(r.data);
       this.total.set(r.total);
     });
@@ -74,8 +101,13 @@ export class ComunicadosListComponent implements OnInit {
     this.load();
   }
 
-  onEdit(c: Comunicado): void { window.location.href = `/admin/comunicados/${c.id}/editar`; }
-  confirmDelete(c: Comunicado): void { this.toDelete.set(c); this.deleteModal.set(true); }
+  onEdit(c: Comunicado): void {
+    window.location.href = `/admin/comunicados/${c.id}/editar`;
+  }
+  confirmDelete(c: Comunicado): void {
+    this.toDelete.set(c);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const c = this.toDelete();
     if (!c) return;

@@ -36,14 +36,21 @@ import { Pastor } from '../../../../core/models';
           emptyMessage="Aún no hay pastores registrados"
           emptyHint="Usa el botón “+ Nuevo pastor” para agregar el primero."
           (edit)="onEdit($any($event))"
-          (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
 
     <app-modal [isOpen]="deleteModal()" title="Eliminar pastor" (closed)="deleteModal.set(false)">
       <p class="text-muted text-sm mb-6">
-        ¿Eliminar a <strong class="text-foreground">{{ toDelete()?.nombrePastor }}</strong>?
+        ¿Eliminar a <strong class="text-foreground">{{ toDelete()?.nombrePastor }}</strong
+        >?
       </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
@@ -63,8 +70,12 @@ export class PastoresListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   deleteModal = signal(false);
   toDelete = signal<Pastor | null>(null);
 
@@ -72,32 +83,41 @@ export class PastoresListComponent implements OnInit {
     const igs = this.iglesias();
     const cgs = this.cargos();
     return [
-      { key: 'foto', header: 'Foto', image: row => ({ src: row['foto'], label: String(row['nombrePastor']) }) },
+      {
+        key: 'foto',
+        header: 'Foto',
+        image: (row) => ({ src: row['foto'], label: String(row['nombrePastor']) }),
+      },
       { key: 'nombrePastor', header: 'Nombre' },
       {
         key: 'cargoId',
         header: 'Cargo',
-        badge: row => {
-          const nombre = cgs.find(c => c.id === row['cargoId'])?.nombre ?? '—';
-          const color = nombre.includes('Regional') ? 'amber' as const : nombre.includes('Distrital') ? 'teal' as const : 'gray' as const;
+        badge: (row) => {
+          const nombre = cgs.find((c) => c.id === row['cargoId'])?.nombre ?? '—';
+          const color = nombre.includes('Regional')
+            ? ('amber' as const)
+            : nombre.includes('Distrital')
+              ? ('teal' as const)
+              : ('gray' as const);
           return { text: nombre, color };
         },
       },
-      { key: 'iglesiaId', header: 'Iglesia', render: row => igs.find(i => i.id === row['iglesiaId'])?.nombre ?? '—' },
-      { key: 'celular', header: 'Celular', render: row => String(row['celular'] ?? '—') },
+      {
+        key: 'iglesiaId',
+        header: 'Iglesia',
+        render: (row) => igs.find((i) => i.id === row['iglesiaId'])?.nombre ?? '—',
+      },
+      { key: 'celular', header: 'Celular', render: (row) => String(row['celular'] ?? '—') },
     ];
   });
 
   ngOnInit(): void {
-    this.breadcrumb.set([
-      { label: 'Admin', route: '/admin/dashboard' },
-      { label: 'Pastores' },
-    ]);
+    this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Pastores' }]);
     this.load();
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.pastores.set(r.data);
       this.total.set(r.total);
     });

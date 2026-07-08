@@ -35,16 +35,22 @@ import { Distrito } from '../../../../core/models';
           emptyMessage="Aún no hay distritos registrados"
           emptyHint="Usa el botón “+ Nuevo distrito” para agregar el primero."
           (edit)="onEdit($any($event))"
-          (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
 
     <app-modal [isOpen]="deleteModal()" title="Eliminar distrito" (closed)="deleteModal.set(false)">
       <p class="text-muted text-sm mb-6">
         ¿Confirmas que deseas eliminar el distrito
-        <strong class="text-foreground">{{ toDelete()?.nombre }}</strong>?
-        Esta acción no se puede deshacer.
+        <strong class="text-foreground">{{ toDelete()?.nombre }}</strong
+        >? Esta acción no se puede deshacer.
       </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
@@ -63,7 +69,9 @@ export class DistritosListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   deleteModal = signal(false);
   toDelete = signal<Distrito | null>(null);
 
@@ -74,8 +82,8 @@ export class DistritosListComponent implements OnInit {
       {
         key: 'id',
         header: 'Iglesias',
-        badge: row => {
-          const n = igs.filter(i => i.distritoId === row['id']).length;
+        badge: (row) => {
+          const n = igs.filter((i) => i.distritoId === row['id']).length;
           return { text: `${n} iglesia${n === 1 ? '' : 's'}`, color: 'teal' };
         },
       },
@@ -83,15 +91,12 @@ export class DistritosListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.breadcrumb.set([
-      { label: 'Admin', route: '/admin/dashboard' },
-      { label: 'Distritos' },
-    ]);
+    this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Distritos' }]);
     this.load();
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.distritos.set(r.data);
       this.total.set(r.total);
     });

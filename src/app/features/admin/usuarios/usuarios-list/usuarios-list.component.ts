@@ -33,16 +33,28 @@ const ESTADO_BADGE: Record<number, { text: string; color: 'green' | 'gray' }> = 
         <a routerLink="/admin/usuarios/nuevo"><app-button>+ Nuevo usuario</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns" [data]="usuarios()"
+        <app-table
+          [columns]="columns"
+          [data]="usuarios()"
           emptyIcon="🔐"
           emptyMessage="Aún no hay usuarios registrados"
           emptyHint="Usa el botón “+ Nuevo usuario” para agregar el primero."
-          (edit)="onEdit($any($event))" (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (edit)="onEdit($any($event))"
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
     <app-modal [isOpen]="deleteModal()" title="Eliminar usuario" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar al usuario <strong class="text-foreground">{{ toDelete()?.nombre }}</strong>?</p>
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar al usuario <strong class="text-foreground">{{ toDelete()?.nombre }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -64,9 +76,17 @@ export class UsuariosListComponent implements OnInit {
 
   readonly columns: TableColumn[] = [
     { key: 'nombre', header: 'Nombre' },
-    { key: 'email', header: 'Email', render: row => String(row['email'] ?? '—') },
-    { key: 'rolId', header: 'Rol', badge: row => ROL_BADGE[Number(row['rolId'])] ?? { text: '—', color: 'gray' } },
-    { key: 'estadoId', header: 'Estado', badge: row => ESTADO_BADGE[Number(row['estadoId'])] ?? { text: '—', color: 'gray' } },
+    { key: 'email', header: 'Email', render: (row) => String(row['email'] ?? '—') },
+    {
+      key: 'rolId',
+      header: 'Rol',
+      badge: (row) => ROL_BADGE[Number(row['rolId'])] ?? { text: '—', color: 'gray' },
+    },
+    {
+      key: 'estadoId',
+      header: 'Estado',
+      badge: (row) => ESTADO_BADGE[Number(row['estadoId'])] ?? { text: '—', color: 'gray' },
+    },
   ];
 
   ngOnInit(): void {
@@ -75,7 +95,7 @@ export class UsuariosListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.usuarios.set(r.data);
       this.total.set(r.total);
     });
@@ -86,8 +106,13 @@ export class UsuariosListComponent implements OnInit {
     this.load();
   }
 
-  onEdit(u: Usuario): void { window.location.href = `/admin/usuarios/${u.id}/editar`; }
-  confirmDelete(u: Usuario): void { this.toDelete.set(u); this.deleteModal.set(true); }
+  onEdit(u: Usuario): void {
+    window.location.href = `/admin/usuarios/${u.id}/editar`;
+  }
+  confirmDelete(u: Usuario): void {
+    this.toDelete.set(u);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const u = this.toDelete();
     if (!u) return;

@@ -26,16 +26,29 @@ import { Lider } from '../../../../core/models';
         <a routerLink="/admin/lideres/nuevo"><app-button>+ Nuevo líder</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
-        <app-table [columns]="columns()" [data]="lideres()"
+        <app-table
+          [columns]="columns()"
+          [data]="lideres()"
           emptyIcon="🌟"
           emptyMessage="Aún no hay líderes registrados"
           emptyHint="Usa el botón “+ Nuevo líder” para agregar el primero."
-          (edit)="onEdit($any($event))" (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (edit)="onEdit($any($event))"
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
     <app-modal [isOpen]="deleteModal()" title="Eliminar líder" (closed)="deleteModal.set(false)">
-      <p class="text-muted text-sm mb-6">¿Eliminar a <strong class="text-foreground">{{ toDelete()?.nombre }} {{ toDelete()?.apellido }}</strong>?</p>
+      <p class="text-muted text-sm mb-6">
+        ¿Eliminar a
+        <strong class="text-foreground">{{ toDelete()?.nombre }} {{ toDelete()?.apellido }}</strong
+        >?
+      </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
         <app-button variant="danger" (clicked)="doDelete()">Eliminar</app-button>
@@ -54,8 +67,12 @@ export class LideresListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  ministerios = toSignal(this.ministeriosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  ministerios = toSignal(this.ministeriosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   deleteModal = signal(false);
   toDelete = signal<Lider | null>(null);
 
@@ -64,9 +81,20 @@ export class LideresListComponent implements OnInit {
     const igs = this.iglesias();
     return [
       { key: 'dni', header: 'DNI' },
-      { key: 'nombre', header: 'Nombre', render: row => `${row['nombre']} ${row['apellido']}` },
-      { key: 'ministerioId', header: 'Ministerio', badge: row => ({ text: ms.find(m => m.id === row['ministerioId'])?.nombre ?? '—', color: 'teal' }) },
-      { key: 'iglesiaId', header: 'Iglesia', render: row => igs.find(i => i.id === row['iglesiaId'])?.nombre ?? '—' },
+      { key: 'nombre', header: 'Nombre', render: (row) => `${row['nombre']} ${row['apellido']}` },
+      {
+        key: 'ministerioId',
+        header: 'Ministerio',
+        badge: (row) => ({
+          text: ms.find((m) => m.id === row['ministerioId'])?.nombre ?? '—',
+          color: 'teal',
+        }),
+      },
+      {
+        key: 'iglesiaId',
+        header: 'Iglesia',
+        render: (row) => igs.find((i) => i.id === row['iglesiaId'])?.nombre ?? '—',
+      },
     ];
   });
 
@@ -76,7 +104,7 @@ export class LideresListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.lideres.set(r.data);
       this.total.set(r.total);
     });
@@ -87,8 +115,13 @@ export class LideresListComponent implements OnInit {
     this.load();
   }
 
-  onEdit(l: Lider): void { window.location.href = `/admin/lideres/${l.id}/editar`; }
-  confirmDelete(l: Lider): void { this.toDelete.set(l); this.deleteModal.set(true); }
+  onEdit(l: Lider): void {
+    window.location.href = `/admin/lideres/${l.id}/editar`;
+  }
+  confirmDelete(l: Lider): void {
+    this.toDelete.set(l);
+    this.deleteModal.set(true);
+  }
   doDelete(): void {
     const l = this.toDelete();
     if (!l) return;

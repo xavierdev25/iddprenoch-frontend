@@ -14,7 +14,8 @@ import { Component, computed, input, output } from '@angular/core';
             type="button"
             class="px-3 py-1.5 rounded border border-border text-foreground disabled:opacity-40 disabled:cursor-not-allowed hover:bg-border/60 transition-colors cursor-pointer"
             [disabled]="page() <= 1"
-            (click)="goTo(page() - 1)">
+            (click)="goTo(page() - 1)"
+          >
             ← Anterior
           </button>
 
@@ -22,8 +23,11 @@ import { Component, computed, input, output } from '@angular/core';
             <button
               type="button"
               class="w-8 h-8 rounded text-sm transition-colors cursor-pointer"
-              [class]="p === page() ? 'bg-primary text-white' : 'text-foreground hover:bg-border/60'"
-              (click)="goTo(p)">
+              [class]="
+                p === page() ? 'bg-primary text-white' : 'text-foreground hover:bg-border/60'
+              "
+              (click)="goTo(p)"
+            >
               {{ p }}
             </button>
           }
@@ -32,7 +36,8 @@ import { Component, computed, input, output } from '@angular/core';
             type="button"
             class="px-3 py-1.5 rounded border border-border text-foreground disabled:opacity-40 disabled:cursor-not-allowed hover:bg-border/60 transition-colors cursor-pointer"
             [disabled]="page() >= totalPages()"
-            (click)="goTo(page() + 1)">
+            (click)="goTo(page() + 1)"
+          >
             Siguiente →
           </button>
         </div>

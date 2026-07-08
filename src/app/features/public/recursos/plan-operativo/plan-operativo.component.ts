@@ -9,12 +9,10 @@ import { RecursosNavComponent } from '../shared/recursos-nav/recursos-nav.compon
     <div class="max-w-4xl mx-auto px-4 py-12">
       <div class="mb-8">
         <p class="text-primary text-sm font-medium tracking-widest uppercase mb-2">Recursos</p>
-        <h1 class="font-display text-4xl sm:text-5xl text-foreground mb-3">
-          Plan Operativo 2026
-        </h1>
+        <h1 class="font-display text-4xl sm:text-5xl text-foreground mb-3">Plan Operativo 2026</h1>
         <p class="text-muted max-w-xl leading-relaxed">
-          El Plan Operativo Anual detalla las actividades, responsables y presupuesto para el año en curso,
-          en línea con el Plan Estratégico regional.
+          El Plan Operativo Anual detalla las actividades, responsables y presupuesto para el año en
+          curso, en línea con el Plan Estratégico regional.
         </p>
       </div>
 
@@ -24,7 +22,9 @@ import { RecursosNavComponent } from '../shared/recursos-nav/recursos-nav.compon
         @for (trimestre of trimestres; track trimestre.periodo) {
           <div class="bg-surface border border-border rounded-xl overflow-hidden">
             <div class="px-5 py-3 bg-primary/5 border-b border-border flex items-center gap-2">
-              <span class="text-xs font-semibold uppercase tracking-wide text-primary">{{ trimestre.periodo }}</span>
+              <span class="text-xs font-semibold uppercase tracking-wide text-primary">{{
+                trimestre.periodo
+              }}</span>
             </div>
             <ul class="divide-y divide-border">
               @for (actividad of trimestre.actividades; track actividad.nombre) {

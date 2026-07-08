@@ -37,14 +37,21 @@ import { Iglesia } from '../../../../core/models';
           emptyHint="Usa el botón “+ Nueva iglesia” para agregar la primera."
           (view)="onView($any($event))"
           (edit)="onEdit($any($event))"
-          (delete)="confirmDelete($any($event))" />
-        <app-pagination [total]="total()" [page]="page()" [limit]="limit" (pageChange)="onPage($event)" />
+          (delete)="confirmDelete($any($event))"
+        />
+        <app-pagination
+          [total]="total()"
+          [page]="page()"
+          [limit]="limit"
+          (pageChange)="onPage($event)"
+        />
       </div>
     </div>
 
     <app-modal [isOpen]="deleteModal()" title="Eliminar iglesia" (closed)="deleteModal.set(false)">
       <p class="text-muted text-sm mb-6">
-        ¿Eliminar la iglesia <strong class="text-foreground">{{ toDelete()?.nombre }}</strong>?
+        ¿Eliminar la iglesia <strong class="text-foreground">{{ toDelete()?.nombre }}</strong
+        >?
       </p>
       <div class="flex gap-3 justify-end">
         <app-button variant="ghost" (clicked)="deleteModal.set(false)">Cancelar</app-button>
@@ -63,34 +70,40 @@ export class IglesiasListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map(r => r.data)), { initialValue: [] });
+  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   deleteModal = signal(false);
   toDelete = signal<Iglesia | null>(null);
 
   columns = computed<TableColumn[]>(() => {
     const ds = this.distritos();
     return [
-      { key: 'foto', header: 'Foto', image: row => ({ src: row['foto'], label: String(row['nombre']) }) },
+      {
+        key: 'foto',
+        header: 'Foto',
+        image: (row) => ({ src: row['foto'], label: String(row['nombre']) }),
+      },
       { key: 'nombre', header: 'Nombre' },
       { key: 'direccion', header: 'Dirección' },
       {
         key: 'distritoId',
         header: 'Distrito',
-        badge: row => ({ text: ds.find(d => d.id === row['distritoId'])?.nombre ?? '—', color: 'teal' }),
+        badge: (row) => ({
+          text: ds.find((d) => d.id === row['distritoId'])?.nombre ?? '—',
+          color: 'teal',
+        }),
       },
     ];
   });
 
   ngOnInit(): void {
-    this.breadcrumb.set([
-      { label: 'Admin', route: '/admin/dashboard' },
-      { label: 'Iglesias' },
-    ]);
+    this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Iglesias' }]);
     this.load();
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe(r => {
+    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
       this.iglesias.set(r.data);
       this.total.set(r.total);
     });

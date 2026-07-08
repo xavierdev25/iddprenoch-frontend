@@ -26,12 +26,18 @@ export interface TableColumn {
         <thead>
           <tr class="border-b border-border bg-background">
             @for (col of columns(); track col.key) {
-              <th class="px-4 text-left font-semibold text-muted text-xs uppercase tracking-wide" [class]="compact() ? 'py-2' : 'py-3'">
+              <th
+                class="px-4 text-left font-semibold text-muted text-xs uppercase tracking-wide"
+                [class]="compact() ? 'py-2' : 'py-3'"
+              >
                 {{ col.header }}
               </th>
             }
             @if (showActions()) {
-              <th class="px-4 text-right font-semibold text-muted text-xs uppercase tracking-wide" [class]="compact() ? 'py-2' : 'py-3'">
+              <th
+                class="px-4 text-right font-semibold text-muted text-xs uppercase tracking-wide"
+                [class]="compact() ? 'py-2' : 'py-3'"
+              >
                 Acciones
               </th>
             }
@@ -39,7 +45,9 @@ export interface TableColumn {
         </thead>
         <tbody>
           @for (row of data(); track $index) {
-            <tr class="border-b border-border last:border-0 hover:bg-primary/[.03] transition-colors">
+            <tr
+              class="border-b border-border last:border-0 hover:bg-primary/[.03] transition-colors"
+            >
               @for (col of columns(); track col.key) {
                 <td class="px-4 text-foreground" [class]="compact() ? 'py-2' : 'py-3'">
                   @if (col.image) {
@@ -48,7 +56,8 @@ export interface TableColumn {
                       [alt]="col.image(row).label"
                       [label]="col.image(row).label"
                       [clickable]="false"
-                      class="w-9 h-9 rounded-md" />
+                      class="w-9 h-9 rounded-md"
+                    />
                   } @else if (col.badge) {
                     <app-badge [color]="col.badge(row).color">{{ col.badge(row).text }}</app-badge>
                   } @else {
@@ -63,20 +72,23 @@ export interface TableColumn {
                       <button
                         type="button"
                         (click)="view.emit(row)"
-                        class="text-primary hover:underline text-xs font-medium">
+                        class="text-primary hover:underline text-xs font-medium"
+                      >
                         Ver
                       </button>
                     }
                     <button
                       type="button"
                       (click)="edit.emit(row)"
-                      class="text-primary hover:underline text-xs font-medium">
+                      class="text-primary hover:underline text-xs font-medium"
+                    >
                       Editar
                     </button>
                     <button
                       type="button"
                       (click)="delete.emit(row)"
-                      class="text-danger hover:underline text-xs font-medium">
+                      class="text-danger hover:underline text-xs font-medium"
+                    >
                       Eliminar
                     </button>
                   </div>
@@ -87,7 +99,8 @@ export interface TableColumn {
             <tr>
               <td
                 [attr.colspan]="showActions() ? columns().length + 1 : columns().length"
-                class="px-4 py-14 text-center">
+                class="px-4 py-14 text-center"
+              >
                 <p class="text-3xl mb-2">{{ emptyIcon() }}</p>
                 <p class="text-foreground text-sm font-medium">{{ emptyMessage() }}</p>
                 @if (emptyHint()) {
