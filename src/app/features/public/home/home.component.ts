@@ -23,8 +23,8 @@ import { ImageLightboxComponent, LightboxImage } from '../../../shared/ui/image-
       </svg>
 
       <div class="relative max-w-6xl mx-auto px-6">
-        <div class="flex flex-col min-[860px]:flex-row items-stretch gap-10">
-          <div class="max-w-[640px] flex flex-col justify-center items-start">
+        <div class="flex flex-col min-[860px]:flex-row items-stretch gap-8">
+          <div class="max-w-[600px] flex flex-col justify-center items-start">
             <!-- Hero tag -->
             <span class="inline-block bg-background border border-secondary text-secondary text-xs font-semibold tracking-[.06em] uppercase px-3.5 py-1.5 rounded-full mb-[22px]">
               Convención regional 2026
@@ -53,7 +53,7 @@ import { ImageLightboxComponent, LightboxImage } from '../../../shared/ui/image-
             </div>
           </div>
 
-          <div class="w-full min-[860px]:w-[380px] shrink-0">
+          <div class="w-full min-[860px]:w-[460px] shrink-0">
             <img
               src="/imageHero.webp"
               alt="Comunidad de la iglesia reunida"
