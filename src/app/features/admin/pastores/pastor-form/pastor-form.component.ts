@@ -9,7 +9,7 @@ import { CargosService } from '../../../../core/services/cargos.service';
 import { DistritosService } from '../../../../core/services/distritos.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
-import { stripEmptyStrings } from '../../../../core/utils/clean-payload.util';
+import { stripEmptyStrings, valueIfChanged } from '../../../../core/utils/clean-payload.util';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { SelectComponent } from '../../../../shared/ui/select/select.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -159,14 +159,15 @@ export class PastorFormComponent implements OnInit {
     }
     this.loading.set(true);
     this.error.set('');
+    const id = this.route.snapshot.paramMap.get('id');
     const raw = this.form.getRawValue();
     const data = stripEmptyStrings({
       ...raw,
       iglesiaId: Number(raw.iglesiaId),
       cargoId: Number(raw.cargoId),
       distritoId: raw.distritoId ? Number(raw.distritoId) : undefined,
+      foto: valueIfChanged(raw.foto, this.form.controls.foto, id !== null),
     });
-    const id = this.route.snapshot.paramMap.get('id');
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
       next: () => {

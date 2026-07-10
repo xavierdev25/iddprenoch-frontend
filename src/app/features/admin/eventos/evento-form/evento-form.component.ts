@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventosService } from '../../../../core/services/eventos.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
-import { stripEmptyStrings } from '../../../../core/utils/clean-payload.util';
+import { stripEmptyStrings, valueIfChanged } from '../../../../core/utils/clean-payload.util';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { ImageUploadComponent } from '../../../../shared/ui/image-upload/image-upload.component';
@@ -121,8 +121,12 @@ export class EventoFormComponent implements OnInit {
     }
     this.loading.set(true);
     this.error.set('');
-    const data = stripEmptyStrings(this.form.getRawValue());
     const id = this.route.snapshot.paramMap.get('id');
+    const raw = this.form.getRawValue();
+    const data = stripEmptyStrings({
+      ...raw,
+      imagen: valueIfChanged(raw.imagen, this.form.controls.imagen, id !== null),
+    });
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
       next: () => {

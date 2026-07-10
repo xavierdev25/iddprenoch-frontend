@@ -8,7 +8,7 @@ import { DistritosService } from '../../../../core/services/distritos.service';
 import { MinisteriosService } from '../../../../core/services/ministerios.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
-import { stripEmptyStrings } from '../../../../core/utils/clean-payload.util';
+import { stripEmptyStrings, valueIfChanged } from '../../../../core/utils/clean-payload.util';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { SelectComponent } from '../../../../shared/ui/select/select.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -147,15 +147,15 @@ export class IglesiaFormComponent implements OnInit {
     }
     this.loading.set(true);
     this.error.set('');
+    const id = this.route.snapshot.paramMap.get('id');
     const raw = this.form.getRawValue();
     const data = stripEmptyStrings({
       nombre: raw.nombre,
       direccion: raw.direccion,
       distritoId: Number(raw.distritoId),
       ministerioId: raw.ministerioId ? Number(raw.ministerioId) : undefined,
-      foto: raw.foto,
+      foto: valueIfChanged(raw.foto, this.form.controls.foto, id !== null),
     });
-    const id = this.route.snapshot.paramMap.get('id');
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
       next: () => {
