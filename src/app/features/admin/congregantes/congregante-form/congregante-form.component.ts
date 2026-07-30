@@ -1,14 +1,20 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { CongregantesService } from '../../../../core/services/congregantes.service';
 import { IglesiasService } from '../../../../core/services/iglesias.service';
+import { MinisteriosService } from '../../../../core/services/ministerios.service';
 import { CatalogosService } from '../../../../core/services/catalogos.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
 import { stripEmptyStrings, valueIfChanged } from '../../../../core/utils/clean-payload.util';
+import {
+  edadDeFechaISO,
+  etiquetaGrupoEtario,
+  fechaNoFutura,
+} from '../../../../core/utils/edad.util';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { SelectComponent } from '../../../../shared/ui/select/select.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -74,12 +80,25 @@ import { ImageUploadComponent } from '../../../../shared/ui/image-upload/image-u
                 [required]="true"
               />
             </div>
-            <app-select
-              label="Estado civil"
-              [control]="form.controls.estadoCivilId"
-              [options]="estadoCivilOptions()"
-              [required]="true"
-            />
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <app-input
+                  label="Fecha de nacimiento"
+                  [control]="form.controls.fechaNacimiento"
+                  type="date"
+                />
+                <!-- La edad y el grupo etario se derivan de esta fecha; no se guardan aparte. -->
+                @if (grupoEtarioCalculado(); as grupo) {
+                  <p class="text-xs text-muted mt-1.5">{{ grupo }}</p>
+                }
+              </div>
+              <app-select
+                label="Estado civil"
+                [control]="form.controls.estadoCivilId"
+                [options]="estadoCivilOptions()"
+                [required]="true"
+              />
+            </div>
           </div>
         </div>
 
@@ -120,6 +139,12 @@ import { ImageUploadComponent } from '../../../../shared/ui/image-upload/image-u
               [options]="estadoEclesialOptions()"
               [required]="true"
             />
+            <app-select
+              label="Ministerio en el que participa (opcional)"
+              [control]="form.controls.ministerioId"
+              [options]="ministerioOptions()"
+              placeholder="Sin ministerio asignado"
+            />
             <div class="grid grid-cols-2 gap-4">
               <app-input
                 label="Fecha de conversión"
@@ -157,6 +182,7 @@ export class CongregantesFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(CongregantesService);
   private readonly iglesiasService = inject(IglesiasService);
+  private readonly ministeriosService = inject(MinisteriosService);
   private readonly catalogosService = inject(CatalogosService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -168,11 +194,15 @@ export class CongregantesFormComponent implements OnInit {
   iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
+  ministerios = toSignal(this.ministeriosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
   sexos = toSignal(this.catalogosService.getSexos(), { initialValue: [] });
   estadosCiviles = toSignal(this.catalogosService.getEstadosCiviles(), { initialValue: [] });
   estadosEclesiales = toSignal(this.catalogosService.getEstadosEclesiales(), { initialValue: [] });
 
   iglesiaOptions = () => this.iglesias().map((i) => ({ value: i.id, label: i.nombre }));
+  ministerioOptions = () => this.ministerios().map((m) => ({ value: m.id, label: m.nombre }));
   sexoOptions = () => this.sexos().map((s) => ({ value: s.id, label: s.nombre }));
   estadoCivilOptions = () => this.estadosCiviles().map((e) => ({ value: e.id, label: e.nombre }));
   estadoEclesialOptions = () =>
@@ -184,13 +214,26 @@ export class CongregantesFormComponent implements OnInit {
     apellido: ['', [Validators.required]],
     telefono: [''],
     correo: ['', [Validators.email]],
+    fechaNacimiento: ['', [fechaNoFutura]],
     iglesiaId: [0, [Validators.required, Validators.min(1)]],
+    ministerioId: [0],
     sexoId: [0, [Validators.required, Validators.min(1)]],
     estadoCivilId: [0, [Validators.required, Validators.min(1)]],
     estadoEclesialId: [0, [Validators.required, Validators.min(1)]],
     fechaConversion: [''],
     fechaBautismo: [''],
     foto: [''],
+  });
+
+  /** Eco de lo que el backend calculará, para confirmar la fecha antes de guardar. */
+  private readonly fechaNacimientoValor = toSignal(
+    this.form.controls.fechaNacimiento.valueChanges,
+    { initialValue: '' },
+  );
+
+  grupoEtarioCalculado = computed(() => {
+    const edad = edadDeFechaISO(this.fechaNacimientoValor());
+    return edad === undefined ? '' : `${edad} años · ${etiquetaGrupoEtario(edad)}`;
   });
 
   ngOnInit(): void {
@@ -226,6 +269,8 @@ export class CongregantesFormComponent implements OnInit {
     const data = stripEmptyStrings({
       ...raw,
       iglesiaId: Number(raw.iglesiaId),
+      // Opcional: sin selección se manda ausente, no 0, que el backend rechazaría como FK inválida.
+      ministerioId: raw.ministerioId ? Number(raw.ministerioId) : undefined,
       sexoId: Number(raw.sexoId),
       estadoCivilId: Number(raw.estadoCivilId),
       estadoEclesialId: Number(raw.estadoEclesialId),

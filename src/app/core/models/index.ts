@@ -15,6 +15,14 @@ export interface Iglesia {
   distritoId: number;
   ministerioId?: number;
   foto?: string;
+  /** Punto exacto de la sede. La mayoría no figura como lugar en Google Maps. */
+  latitud?: number;
+  longitud?: number;
+  /**
+   * Enlace al mapa. De solo lectura: el backend lo deriva de las coordenadas. Al guardar se puede
+   * mandar en su lugar la URL de Google Maps pegada, y el backend extrae de ahí lat/lng.
+   */
+  mapsUrl?: string;
 }
 
 export interface Pastor {
@@ -45,6 +53,9 @@ export interface Ministerio {
   slug?: string;
 }
 
+/** Tramos de edad del reporte de membresía. `sin_fecha` = aún sin fecha de nacimiento cargada. */
+export type GrupoEtario = 'nino' | 'adolescente' | 'joven' | 'adulto' | 'sin_fecha';
+
 export interface Congregante {
   id: number;
   dni: string;
@@ -52,12 +63,30 @@ export interface Congregante {
   apellido: string;
   telefono?: string;
   correo?: string;
+  fechaNacimiento?: string;
+  /** Derivados de `fechaNacimiento` por el backend; no se envían al guardar. */
+  edad?: number;
+  grupoEtario?: GrupoEtario;
   iglesiaId: number;
+  /** Ministerio en el que participa. Opcional. */
+  ministerioId?: number;
   sexoId: number;
   estadoCivilId: number;
   estadoEclesialId: number;
   fechaConversion?: string;
   fechaBautismo?: string;
+}
+
+/** Filtros compartidos por el listado de congregantes y los reportes. */
+export interface CongregantesFiltros {
+  iglesiaId?: number;
+  distritoId?: number;
+  ministerioId?: number;
+  sexoId?: number;
+  estadoCivilId?: number;
+  estadoEclesialId?: number;
+  grupoEtario?: GrupoEtario;
+  q?: string;
 }
 
 export interface Evento {
@@ -105,4 +134,40 @@ export interface Paginated<T> {
   total: number;
   page: number;
   limit: number;
+}
+
+// ── Reportes de membresía ──────────────────────────────────────────────────────
+
+export type Agrupacion = 'iglesia' | 'distrito';
+
+/** Conteos de un grupo. Las claves de `porSexo`/`porEstadoEclesial` son nombres del catálogo. */
+export interface Conteos {
+  total: number;
+  porSexo: Record<string, number>;
+  porGrupoEtario: Record<GrupoEtario, number>;
+  porEstadoEclesial: Record<string, number>;
+}
+
+export interface FilaConsolidado extends Conteos {
+  id: number;
+  nombre: string;
+  /** Solo presente al agrupar por iglesia. */
+  distrito?: string;
+}
+
+/** Filtro activo ya resuelto a texto por el backend, para mostrarlo en pantalla y en el archivo. */
+export interface FiltroAplicado {
+  etiqueta: string;
+  valor: string;
+}
+
+export interface ReporteMembresia {
+  generadoEn: string;
+  agruparPor: Agrupacion;
+  filtros: FiltroAplicado[];
+  /** Nombres de catálogo que definen las columnas variables del reporte. */
+  columnasSexo: string[];
+  columnasEstadoEclesial: string[];
+  filas: FilaConsolidado[];
+  totales: Conteos;
 }

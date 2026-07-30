@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Congregante, Paginated } from '../models';
+import { Congregante, CongregantesFiltros, Paginated } from '../models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -9,11 +9,23 @@ export class CongregantesService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/congregantes`;
 
-  // Nota: todo el recurso (incl. GET) requiere sesión en el backend.
-  getAll(params?: { page?: number; limit?: number }): Observable<Paginated<Congregante>> {
-    const httpParams = new HttpParams()
-      .set('page', params?.page ?? 1)
-      .set('limit', params?.limit ?? 20);
+  /**
+   * Nota: todo el recurso (incl. GET) requiere sesión en el backend.
+   *
+   * Los filtros son los mismos que aceptan los reportes, así que la lista en pantalla y el
+   * Excel/PDF descargado con los mismos criterios devuelven el mismo conjunto de personas.
+   */
+  getAll(
+    params?: { page?: number; limit?: number } & CongregantesFiltros,
+  ): Observable<Paginated<Congregante>> {
+    const { page, limit, ...filtros } = params ?? {};
+    let httpParams = new HttpParams().set('page', page ?? 1).set('limit', limit ?? 20);
+    // Un filtro vacío no se envía: el backend lo tomaría como criterio real y devolvería 400.
+    for (const [clave, valor] of Object.entries(filtros)) {
+      if (valor !== undefined && valor !== null && valor !== '') {
+        httpParams = httpParams.set(clave, String(valor));
+      }
+    }
     return this.http.get<Paginated<Congregante>>(this.base, { params: httpParams });
   }
 

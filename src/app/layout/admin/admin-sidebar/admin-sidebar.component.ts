@@ -97,7 +97,10 @@ export class AdminSidebarComponent {
   readonly sections: NavSection[] = [
     {
       label: 'General',
-      items: [{ label: 'Dashboard', route: '/admin/dashboard', icon: '📊' }],
+      items: [
+        { label: 'Dashboard', route: '/admin/dashboard', icon: '📊' },
+        { label: 'Reportes', route: '/admin/reportes', icon: '📄' },
+      ],
     },
     {
       label: 'Organización',

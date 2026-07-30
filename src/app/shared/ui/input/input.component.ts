@@ -60,6 +60,7 @@ export class InputComponent {
       return `Máximo ${(errors['maxlength'] as { requiredLength: number }).requiredLength} caracteres`;
     if (errors['pattern']) return 'Formato inválido';
     if (errors['passwordMismatch']) return 'Las contraseñas no coinciden';
+    if (errors['fechaFutura']) return 'La fecha no puede ser futura';
     return 'Valor inválido';
   });
 }

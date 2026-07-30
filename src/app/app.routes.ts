@@ -39,7 +39,10 @@ export const routes: Routes = [
             path: 'directiva',
             component: DirectivaComponent,
             title: 'Directiva — IDDP Norte Chico',
-            data: { description: 'Conoce a la directiva de la Iglesia de Dios del Perú — Región Norte Chico.' },
+            data: {
+              description:
+                'Conoce a la directiva de la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
           {
             path: 'mision-vision-valores',
@@ -54,14 +57,17 @@ export const routes: Routes = [
             path: 'historia',
             component: HistoriaComponent,
             title: 'Historia — IDDP Norte Chico',
-            data: { description: 'La historia de la Iglesia de Dios del Perú en la Región Norte Chico.' },
+            data: {
+              description: 'La historia de la Iglesia de Dios del Perú en la Región Norte Chico.',
+            },
           },
           {
             path: 'principios-doctrinales',
             component: PrincipiosDoctrinalesComponent,
             title: 'Principios Doctrinales — IDDP Norte Chico',
             data: {
-              description: 'Los principios doctrinales de la Iglesia de Dios del Perú — Región Norte Chico.',
+              description:
+                'Los principios doctrinales de la Iglesia de Dios del Perú — Región Norte Chico.',
             },
           },
           {
@@ -77,7 +83,8 @@ export const routes: Routes = [
         component: MinisterioComponent,
         title: 'Ministerio — IDDP Norte Chico',
         data: {
-          description: 'Ministerios y liderazgo de la Iglesia de Dios del Perú — Región Norte Chico.',
+          description:
+            'Ministerios y liderazgo de la Iglesia de Dios del Perú — Región Norte Chico.',
         },
       },
       {
@@ -88,20 +95,25 @@ export const routes: Routes = [
             path: 'plan-estrategico',
             component: PlanEstrategicoComponent,
             title: 'Plan Estratégico — IDDP Norte Chico',
-            data: { description: 'Plan estratégico de la Iglesia de Dios del Perú — Región Norte Chico.' },
+            data: {
+              description: 'Plan estratégico de la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
           {
             path: 'plan-operativo',
             component: PlanOperativoComponent,
             title: 'Plan Operativo — IDDP Norte Chico',
-            data: { description: 'Plan operativo de la Iglesia de Dios del Perú — Región Norte Chico.' },
+            data: {
+              description: 'Plan operativo de la Iglesia de Dios del Perú — Región Norte Chico.',
+            },
           },
           {
             path: 'accesos-adicionales',
             component: AccesosAdicionalesComponent,
             title: 'Accesos Adicionales — IDDP Norte Chico',
             data: {
-              description: 'Accesos adicionales de la Iglesia de Dios del Perú — Región Norte Chico.',
+              description:
+                'Accesos adicionales de la Iglesia de Dios del Perú — Región Norte Chico.',
             },
           },
         ],
@@ -304,6 +316,14 @@ export const routes: Routes = [
                 title: 'Editar Congregante — IDDP Admin',
               },
             ],
+          },
+          {
+            path: 'reportes',
+            loadComponent: () =>
+              import('./features/admin/reportes/reportes.component').then(
+                (m) => m.ReportesComponent,
+              ),
+            title: 'Reportes — IDDP Admin',
           },
           {
             path: 'ministerios',
