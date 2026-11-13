@@ -114,9 +114,12 @@ export class IglesiaDetailComponent implements OnInit {
   distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
-  pastores = toSignal(this.pastoresService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  pastores = toSignal(
+    this.pastoresService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
@@ -129,7 +132,7 @@ export class IglesiaDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
-      this.iglesiasService.getById(Number(id)).subscribe((i) => {
+      this.iglesiasService.getById(Number(id), { panel: true }).subscribe((i) => {
         this.iglesia.set(i ?? null);
         this.cargando.set(false);
         this.breadcrumb.set([

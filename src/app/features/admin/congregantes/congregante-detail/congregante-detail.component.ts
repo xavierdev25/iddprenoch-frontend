@@ -98,9 +98,12 @@ export class CongregantesDetailComponent implements OnInit {
 
   congregante = signal<Congregante | null>(null);
   cargando = signal(true);
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   sexos = toSignal(this.catalogosService.getSexos(), { initialValue: [] });
   estadosCiviles = toSignal(this.catalogosService.getEstadosCiviles(), { initialValue: [] });
   estadosEclesiales = toSignal(this.catalogosService.getEstadosEclesiales(), { initialValue: [] });

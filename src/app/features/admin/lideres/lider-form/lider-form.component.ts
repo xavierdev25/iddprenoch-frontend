@@ -113,9 +113,12 @@ export class LiderFormComponent implements OnInit {
   ministerios = toSignal(this.ministeriosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
 
   ministerioOptions = () => this.ministerios().map((m) => ({ value: m.id, label: m.nombre }));
   iglesiaOptions = () => this.iglesias().map((i) => ({ value: i.id, label: i.nombre }));

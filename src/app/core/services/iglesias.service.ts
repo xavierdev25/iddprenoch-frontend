@@ -9,10 +9,20 @@ export class IglesiasService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/iglesias`;
 
-  getAll(params?: { page?: number; limit?: number }): Observable<Paginated<Iglesia>> {
-    const httpParams = new HttpParams()
+  /**
+   * `panel: true` pide la vista del panel (`?ambito=panel`): exige sesión y el backend la acota al
+   * distrito del obispo distrital. Sin ella es la vista pública del sitio, completa y
+   * anónima. Toda pantalla bajo /admin debe pedir la del panel.
+   */
+  getAll(params?: {
+    page?: number;
+    limit?: number;
+    panel?: boolean;
+  }): Observable<Paginated<Iglesia>> {
+    let httpParams = new HttpParams()
       .set('page', params?.page ?? 1)
       .set('limit', params?.limit ?? 20);
+    if (params?.panel) httpParams = httpParams.set('ambito', 'panel');
     return this.http.get<Paginated<Iglesia>>(this.base, { params: httpParams });
   }
 
@@ -26,8 +36,9 @@ export class IglesiasService {
     );
   }
 
-  getById(id: number): Observable<Iglesia> {
-    return this.http.get<Iglesia>(`${this.base}/${id}`);
+  getById(id: number, opciones?: { panel?: boolean }): Observable<Iglesia> {
+    const params = opciones?.panel ? new HttpParams().set('ambito', 'panel') : undefined;
+    return this.http.get<Iglesia>(`${this.base}/${id}`, { params });
   }
 
   create(data: Omit<Iglesia, 'id'>): Observable<Iglesia> {

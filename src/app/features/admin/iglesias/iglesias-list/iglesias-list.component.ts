@@ -103,7 +103,7 @@ export class IglesiasListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
+    this.service.getAll({ page: this.page(), limit: this.limit, panel: true }).subscribe((r) => {
       this.iglesias.set(r.data);
       this.total.set(r.total);
     });

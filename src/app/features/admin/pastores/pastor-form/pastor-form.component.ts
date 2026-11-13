@@ -108,9 +108,12 @@ export class PastorFormComponent implements OnInit {
   loading = signal(false);
   error = signal('');
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
@@ -135,7 +138,7 @@ export class PastorFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
       this.isEditing.set(true);
-      this.service.getById(Number(id)).subscribe((p) => {
+      this.service.getById(Number(id), { panel: true }).subscribe((p) => {
         if (p) this.form.patchValue(p);
       });
       this.breadcrumb.set([

@@ -70,9 +70,12 @@ export class PastoresListComponent implements OnInit {
   total = signal(0);
   page = signal(1);
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   cargos = toSignal(this.cargosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
@@ -117,7 +120,7 @@ export class PastoresListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
+    this.service.getAll({ page: this.page(), limit: this.limit, panel: true }).subscribe((r) => {
       this.pastores.set(r.data);
       this.total.set(r.total);
     });
