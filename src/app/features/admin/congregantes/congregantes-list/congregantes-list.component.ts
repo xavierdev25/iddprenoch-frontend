@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { CongregantesService } from '../../../../core/services/congregantes.service';
@@ -10,12 +11,35 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { TableComponent, TableColumn } from '../../../../shared/ui/table/table.component';
 import { ModalComponent } from '../../../../shared/ui/modal/modal.component';
 import { PaginationComponent } from '../../../../shared/ui/pagination/pagination.component';
+import { SelectComponent } from '../../../../shared/ui/select/select.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { AvisoAlcanceComponent } from '../../../../shared/ui/aviso-alcance/aviso-alcance.component';
 import { Congregante } from '../../../../core/models';
+
+/**
+ * El listado muestra solo los 4 primeros dígitos del DNI (prototipo, Figura 20): basta para
+ * distinguir homónimos y no deja el documento completo a la vista de quien mire la pantalla. El
+ * DNI completo está en el detalle.
+ */
+function enmascararDni(dni: unknown): string {
+  const texto = String(dni ?? '');
+  return texto.length > 4 ? `${texto.slice(0, 4)}••••` : texto;
+}
 
 @Component({
   selector: 'app-congregantes-list',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, TableComponent, ModalComponent, PaginationComponent],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    ButtonComponent,
+    TableComponent,
+    ModalComponent,
+    PaginationComponent,
+    SelectComponent,
+    InputComponent,
+    AvisoAlcanceComponent,
+  ],
   template: `
     <div>
       <div class="flex items-center justify-between mb-6">
@@ -25,6 +49,36 @@ import { Congregante } from '../../../../core/models';
         </div>
         <a routerLink="/admin/congregantes/nuevo"><app-button>+ Nuevo congregante</app-button></a>
       </div>
+      <app-aviso-alcance />
+      <form
+        [formGroup]="filtros"
+        (ngSubmit)="aplicarFiltros()"
+        class="bg-surface border border-border rounded-xl p-4 mb-4 grid grid-cols-1 md:grid-cols-4 gap-3 items-end"
+      >
+        <app-select
+          label="Iglesia"
+          [control]="filtros.controls.iglesiaId"
+          [options]="iglesiaOptions()"
+          placeholder="Todas las iglesias"
+        />
+        <app-select
+          label="Estado eclesial"
+          [control]="filtros.controls.estadoEclesialId"
+          [options]="estadoOptions()"
+          placeholder="Todos"
+        />
+        <app-input
+          label="Buscar por nombre o DNI"
+          [control]="filtros.controls.q"
+          placeholder="Ej. Quispe"
+        />
+        <div class="flex gap-2">
+          <app-button type="submit">Filtrar</app-button>
+          <app-button variant="ghost" type="button" (clicked)="limpiarFiltros()"
+            >Limpiar</app-button
+          >
+        </div>
+      </form>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
         <app-table
           [columns]="columns()"
@@ -68,18 +122,29 @@ export class CongregantesListComponent implements OnInit {
   private readonly iglesiasService = inject(IglesiasService);
   private readonly catalogosService = inject(CatalogosService);
   private readonly breadcrumb = inject(BreadcrumbService);
+  private readonly fb = inject(FormBuilder);
 
   readonly limit = 20;
   congregantes = signal<Congregante[]>([]);
   total = signal(0);
   page = signal(1);
 
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   estadosEclesiales = toSignal(this.catalogosService.getEstadosEclesiales(), { initialValue: [] });
   deleteModal = signal(false);
   toDelete = signal<Congregante | null>(null);
+
+  // Las iglesias vienen de la vista del panel: al obispo distrital solo le llegan las suyas.
+  filtros = this.fb.nonNullable.group({ iglesiaId: [''], estadoEclesialId: [''], q: [''] });
+  iglesiaOptions = computed(() => this.iglesias().map((i) => ({ value: i.id, label: i.nombre })));
+  estadoOptions = computed(() =>
+    this.estadosEclesiales().map((e) => ({ value: e.id, label: e.nombre })),
+  );
 
   columns = computed<TableColumn[]>(() => {
     const igs = this.iglesias();
@@ -90,7 +155,7 @@ export class CongregantesListComponent implements OnInit {
         header: 'Foto',
         image: (row) => ({ src: row['foto'], label: `${row['nombre']} ${row['apellido']}` }),
       },
-      { key: 'dni', header: 'DNI' },
+      { key: 'dni', header: 'DNI', render: (row) => enmascararDni(row['dni']) },
       { key: 'nombre', header: 'Nombre', render: (row) => `${row['nombre']} ${row['apellido']}` },
       {
         key: 'iglesiaId',
@@ -116,10 +181,26 @@ export class CongregantesListComponent implements OnInit {
   }
 
   load(): void {
-    this.service.getAll({ page: this.page(), limit: this.limit }).subscribe((r) => {
+    const f = this.filtros.getRawValue();
+    const filtros = {
+      iglesiaId: f.iglesiaId ? Number(f.iglesiaId) : undefined,
+      estadoEclesialId: f.estadoEclesialId ? Number(f.estadoEclesialId) : undefined,
+      q: f.q.trim() || undefined,
+    };
+    this.service.getAll({ page: this.page(), limit: this.limit, ...filtros }).subscribe((r) => {
       this.congregantes.set(r.data);
       this.total.set(r.total);
     });
+  }
+
+  aplicarFiltros(): void {
+    this.page.set(1);
+    this.load();
+  }
+
+  limpiarFiltros(): void {
+    this.filtros.reset();
+    this.aplicarFiltros();
   }
 
   onPage(p: number): void {

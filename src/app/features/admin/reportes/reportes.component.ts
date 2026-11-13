@@ -17,6 +17,8 @@ import { ETIQUETAS_GRUPO_ETARIO, ORDEN_GRUPO_ETARIO } from '../../../core/utils/
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { SelectComponent } from '../../../shared/ui/select/select.component';
 import { InputComponent } from '../../../shared/ui/input/input.component';
+import { AvisoAlcanceComponent } from '../../../shared/ui/aviso-alcance/aviso-alcance.component';
+import { AuthService } from '../../../core/services/auth.service';
 import {
   Agrupacion,
   CongregantesFiltros,
@@ -27,7 +29,13 @@ import {
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonComponent, SelectComponent, InputComponent],
+  imports: [
+    ReactiveFormsModule,
+    ButtonComponent,
+    SelectComponent,
+    InputComponent,
+    AvisoAlcanceComponent,
+  ],
   template: `
     <div>
       <div class="mb-6">
@@ -38,16 +46,22 @@ import {
         </p>
       </div>
 
+      <app-aviso-alcance />
+
       <!-- Filtros -->
       <div class="bg-surface border border-border rounded-xl p-6 mb-5">
         <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-4">Filtros</h2>
         <form [formGroup]="filtros" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <app-select
-            label="Distrito"
-            [control]="filtros.controls.distritoId"
-            [options]="distritoOptions()"
-            placeholder="Todos los distritos"
-          />
+          <!-- El obispo distrital no elige distrito: el backend ya fija el suyo (y elegir otro
+               respondería 403). -->
+          @if (!distritoFijo()) {
+            <app-select
+              label="Distrito"
+              [control]="filtros.controls.distritoId"
+              [options]="distritoOptions()"
+              placeholder="Todos los distritos"
+            />
+          }
           <app-select
             label="Iglesia"
             [control]="filtros.controls.iglesiaId"
@@ -269,6 +283,7 @@ export class ReportesComponent implements OnInit {
   private readonly ministeriosService = inject(MinisteriosService);
   private readonly catalogosService = inject(CatalogosService);
   private readonly breadcrumb = inject(BreadcrumbService);
+  readonly distritoFijo = inject(AuthService).distritoAlcance;
 
   readonly etiquetas = ETIQUETAS_GRUPO_ETARIO;
   readonly ordenGrupos = ORDEN_GRUPO_ETARIO;
@@ -291,9 +306,12 @@ export class ReportesComponent implements OnInit {
   distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });
-  iglesias = toSignal(this.iglesiasService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
-    initialValue: [],
-  });
+  iglesias = toSignal(
+    this.iglesiasService.getAll({ limit: 100, panel: true }).pipe(map((r) => r.data)),
+    {
+      initialValue: [],
+    },
+  );
   ministerios = toSignal(this.ministeriosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
     initialValue: [],
   });

@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { IglesiasService } from '../../../../core/services/iglesias.service';
 import { DistritosService } from '../../../../core/services/distritos.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { MinisteriosService } from '../../../../core/services/ministerios.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
@@ -160,13 +161,20 @@ export class IglesiaFormComponent implements OnInit {
     initialValue: [],
   });
 
-  distritoOptions = () => this.distritos().map((d) => ({ value: d.id, label: d.nombre }));
+  private readonly distritoFijo = inject(AuthService).distritoAlcance;
+
+  // El obispo distrital solo puede crear o mover iglesias dentro de su distrito (el backend
+  // respondería 403 a cualquier otro): no se le ofrecen los demás.
+  distritoOptions = () =>
+    this.distritos()
+      .filter((d) => this.distritoFijo() === null || d.id === this.distritoFijo())
+      .map((d) => ({ value: d.id, label: d.nombre }));
   ministerioOptions = () => this.ministerios().map((m) => ({ value: m.id, label: m.nombre }));
 
   form = this.fb.nonNullable.group({
     nombre: ['', [Validators.required]],
     direccion: ['', [Validators.required]],
-    distritoId: [0, [Validators.required, Validators.min(1)]],
+    distritoId: [this.distritoFijo() ?? 0, [Validators.required, Validators.min(1)]],
     ministerioId: [0],
     foto: [''],
     /** Entrada libre: enlace de Google Maps o coordenadas. El backend extrae de ahí lat/lng. */
@@ -213,7 +221,7 @@ export class IglesiaFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
       this.isEditing.set(true);
-      this.service.getById(Number(id)).subscribe((i) => {
+      this.service.getById(Number(id), { panel: true }).subscribe((i) => {
         if (!i) return;
         // `mapsUrl` se excluye a propósito: la respuesta trae el enlace derivado de las
         // coordenadas, pero este campo es para pegar uno nuevo. Precargarlo lo haría parecer un
