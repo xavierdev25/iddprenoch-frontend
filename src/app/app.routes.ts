@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { permisoGuard } from './core/guards/permiso.guard';
 
 import { PublicShellComponent } from './layout/public/public-shell/public-shell.component';
 
@@ -158,6 +159,7 @@ export const routes: Routes = [
           },
           {
             path: 'distritos',
+            canActivate: [permisoGuard('organizacion')],
             children: [
               {
                 path: '',
@@ -187,6 +189,7 @@ export const routes: Routes = [
           },
           {
             path: 'iglesias',
+            canActivate: [permisoGuard('iglesias')],
             children: [
               {
                 path: '',
@@ -224,6 +227,7 @@ export const routes: Routes = [
           },
           {
             path: 'pastores',
+            canActivate: [permisoGuard('iglesias')],
             children: [
               {
                 path: '',
@@ -253,6 +257,7 @@ export const routes: Routes = [
           },
           {
             path: 'lideres',
+            canActivate: [permisoGuard('iglesias')],
             children: [
               {
                 path: '',
@@ -282,6 +287,7 @@ export const routes: Routes = [
           },
           {
             path: 'congregantes',
+            canActivate: [permisoGuard('membresia')],
             children: [
               {
                 path: '',
@@ -319,6 +325,7 @@ export const routes: Routes = [
           },
           {
             path: 'reportes',
+            canActivate: [permisoGuard('membresia')],
             loadComponent: () =>
               import('./features/admin/reportes/reportes.component').then(
                 (m) => m.ReportesComponent,
@@ -326,7 +333,17 @@ export const routes: Routes = [
             title: 'Reportes — IDDP Admin',
           },
           {
+            path: 'auditoria',
+            canActivate: [permisoGuard('auditoria')],
+            loadComponent: () =>
+              import('./features/admin/auditoria/auditoria.component').then(
+                (m) => m.AuditoriaComponent,
+              ),
+            title: 'Auditoría — IDDP Admin',
+          },
+          {
             path: 'ministerios',
+            canActivate: [permisoGuard('organizacion')],
             children: [
               {
                 path: '',
@@ -356,6 +373,7 @@ export const routes: Routes = [
           },
           {
             path: 'eventos',
+            canActivate: [permisoGuard('contenido')],
             children: [
               {
                 path: '',
@@ -385,6 +403,7 @@ export const routes: Routes = [
           },
           {
             path: 'comunicados',
+            canActivate: [permisoGuard('contenido')],
             children: [
               {
                 path: '',
@@ -414,6 +433,7 @@ export const routes: Routes = [
           },
           {
             path: 'usuarios',
+            canActivate: [permisoGuard('usuarios')],
             children: [
               {
                 path: '',

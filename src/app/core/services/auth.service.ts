@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { Usuario } from '../models';
+import { Permiso, esRolDistrital, permisosDe } from '../utils/permisos.util';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +16,17 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => this._user() !== null);
   readonly currentUser = this._user.asReadonly();
+
+  readonly permisos = computed(() => permisosDe(this._user()?.rol));
+  /** Distrito al que está acotado el usuario, o `null` si su alcance es la región entera. */
+  readonly distritoAlcance = computed(() => {
+    const user = this._user();
+    return user && esRolDistrital(user.rol) ? (user.distritoId ?? null) : null;
+  });
+
+  tienePermiso(permiso: Permiso): boolean {
+    return this.permisos().includes(permiso);
+  }
 
   /**
    * La cookie httpOnly no se puede leer desde JavaScript, así que no hay forma

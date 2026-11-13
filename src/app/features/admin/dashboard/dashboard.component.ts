@@ -1,6 +1,9 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
+import { Permiso } from '../../../core/utils/permisos.util';
 import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
 import { IglesiasService } from '../../../core/services/iglesias.service';
 import { CongregantesService } from '../../../core/services/congregantes.service';
@@ -13,6 +16,7 @@ interface StatCard {
   route: string;
   icon: string;
   accent: string;
+  permiso: Permiso;
 }
 
 @Component({
@@ -55,7 +59,7 @@ interface StatCard {
         Accesos rápidos
       </h2>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        @for (acceso of accesosRapidos; track acceso.titulo) {
+        @for (acceso of accesosVisibles(); track acceso.titulo) {
           <a
             [routerLink]="acceso.ruta"
             class="flex items-center gap-4 p-4 bg-surface border border-border rounded-lg hover:border-primary/30 transition-colors"
@@ -94,27 +98,39 @@ export class DashboardComponent implements OnInit {
   private readonly congregantesService = inject(CongregantesService);
   private readonly eventosService = inject(EventosService);
   private readonly comunicadosService = inject(ComunicadosService);
+  private readonly auth = inject(AuthService);
 
   // Solo necesitamos el `total` de cada recurso para las tarjetas de resumen,
   // así que pedimos limit:1 (el payload de `data` no se usa aquí).
-  private readonly iglesiasResp = toSignal(this.iglesiasService.getAll({ limit: 1 }), {
-    initialValue: null,
-  });
-  private readonly congregantesResp = toSignal(this.congregantesService.getAll({ limit: 1 }), {
-    initialValue: null,
-  });
+  // Cada tarjeta se pide solo si el rol puede verla: congregantes respondería 403 a un Editor, y
+  // el total de iglesias del obispo distrital debe ser el de su distrito (vista del panel).
+  private readonly iglesiasResp = toSignal(
+    this.auth.tienePermiso('iglesias')
+      ? this.iglesiasService.getAll({ limit: 1, panel: true })
+      : of(null),
+    { initialValue: null },
+  );
+  private readonly congregantesResp = toSignal(
+    this.auth.tienePermiso('membresia') ? this.congregantesService.getAll({ limit: 1 }) : of(null),
+    { initialValue: null },
+  );
   private readonly comunicadosResp = toSignal(this.comunicadosService.getAll({ limit: 1 }), {
     initialValue: null,
   });
   eventosProximos = toSignal(this.eventosService.getProximos(100), { initialValue: [] });
 
-  stats = computed<StatCard[]>(() => [
+  stats = computed<StatCard[]>(() =>
+    this.todasLasStats().filter((stat) => this.auth.tienePermiso(stat.permiso)),
+  );
+
+  private readonly todasLasStats = computed<StatCard[]>(() => [
     {
       label: 'Congregantes',
       value: this.congregantesResp()?.total ?? 0,
       route: '/admin/congregantes',
       icon: '👥',
       accent: 'bg-primary/10',
+      permiso: 'membresia',
     },
     {
       label: 'Iglesias',
@@ -122,6 +138,7 @@ export class DashboardComponent implements OnInit {
       route: '/admin/iglesias',
       icon: '⛪',
       accent: 'bg-secondary/10',
+      permiso: 'iglesias',
     },
     {
       label: 'Eventos próximos',
@@ -129,6 +146,7 @@ export class DashboardComponent implements OnInit {
       route: '/admin/eventos',
       icon: '📅',
       accent: 'bg-blue-500/10',
+      permiso: 'contenido',
     },
     {
       label: 'Comunicados',
@@ -136,6 +154,7 @@ export class DashboardComponent implements OnInit {
       route: '/admin/comunicados',
       icon: '📢',
       accent: 'bg-success/10',
+      permiso: 'contenido',
     },
   ]);
 
@@ -149,36 +168,46 @@ export class DashboardComponent implements OnInit {
       titulo: 'Nueva iglesia',
       descripcion: 'Registrar una congregación',
       ruta: '/admin/iglesias/nuevo',
+      permiso: 'iglesias' as Permiso,
     },
     {
       icon: '👤',
       titulo: 'Nuevo pastor',
       descripcion: 'Registrar un pastor',
       ruta: '/admin/pastores/nuevo',
+      permiso: 'iglesias' as Permiso,
     },
     {
       icon: '👥',
       titulo: 'Nuevo congregante',
       descripcion: 'Registrar un miembro',
       ruta: '/admin/congregantes/nuevo',
+      permiso: 'membresia' as Permiso,
     },
     {
       icon: '📅',
       titulo: 'Nuevo evento',
       descripcion: 'Publicar un evento',
       ruta: '/admin/eventos/nuevo',
+      permiso: 'contenido' as Permiso,
     },
     {
       icon: '📢',
       titulo: 'Nuevo comunicado',
       descripcion: 'Publicar un comunicado',
       ruta: '/admin/comunicados/nuevo',
+      permiso: 'contenido' as Permiso,
     },
     {
       icon: '🔐',
       titulo: 'Gestionar usuarios',
       descripcion: 'Permisos del sistema',
       ruta: '/admin/usuarios',
+      permiso: 'usuarios' as Permiso,
     },
   ];
+
+  accesosVisibles = computed(() =>
+    this.accesosRapidos.filter((acceso) => this.auth.tienePermiso(acceso.permiso)),
+  );
 }

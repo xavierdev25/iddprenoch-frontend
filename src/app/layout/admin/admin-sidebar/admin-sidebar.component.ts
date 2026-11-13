@@ -1,5 +1,10 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
+import { DistritosService } from '../../../core/services/distritos.service';
+import { Permiso } from '../../../core/utils/permisos.util';
 
 interface NavSection {
   label: string;
@@ -10,6 +15,8 @@ interface NavItem {
   label: string;
   route: string;
   icon: string;
+  /** Sin permiso, el ítem no se muestra (la API igual rechazaría sus llamadas con 403). */
+  permiso?: Permiso;
 }
 
 @Component({
@@ -46,7 +53,7 @@ interface NavItem {
 
       <!-- Nav -->
       <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-5">
-        @for (section of sections; track section.label) {
+        @for (section of seccionesVisibles(); track section.label) {
           <div>
             <p class="px-2 mb-1.5 text-xs font-semibold uppercase tracking-widest text-surface/30">
               {{ section.label }}
@@ -69,6 +76,14 @@ interface NavItem {
           </div>
         }
       </nav>
+
+      <!-- Usuario: rol y, para el obispo distrital, su distrito (deja claro el alcance) -->
+      @if (auth.currentUser(); as user) {
+        <div class="px-4 py-3 border-t border-surface/10 shrink-0 leading-tight">
+          <p class="text-surface text-sm font-semibold truncate">{{ user.nombre }}</p>
+          <p class="text-surface/50 text-xs truncate">{{ alcanceTexto() }}</p>
+        </div>
+      }
 
       <!-- Link al sitio público -->
       <div class="px-4 py-3 border-t border-surface/10 shrink-0">
@@ -94,43 +109,73 @@ export class AdminSidebarComponent {
   isOpen = input.required<boolean>();
   toggle = output<void>();
 
-  readonly sections: NavSection[] = [
+  protected readonly auth = inject(AuthService);
+  private readonly distritos = toSignal(
+    inject(DistritosService)
+      .getAll({ limit: 100 })
+      .pipe(map((r) => r.data)),
+    { initialValue: [] },
+  );
+
+  /** "Obispo distrital · Huaral", o solo el rol si su alcance es la región. */
+  alcanceTexto = computed(() => {
+    const user = this.auth.currentUser();
+    const distritoId = this.auth.distritoAlcance();
+    const distrito = this.distritos().find((d) => d.id === distritoId)?.nombre;
+    return distrito ? `${user?.rol} · ${distrito}` : (user?.rol ?? '');
+  });
+
+  seccionesVisibles = computed(() =>
+    this.sections
+      .map((s) => ({
+        ...s,
+        items: s.items.filter((i) => !i.permiso || this.auth.permisos().includes(i.permiso)),
+      }))
+      .filter((s) => s.items.length > 0),
+  );
+
+  private readonly sections: NavSection[] = [
     {
       label: 'General',
       items: [
         { label: 'Dashboard', route: '/admin/dashboard', icon: '📊' },
-        { label: 'Reportes', route: '/admin/reportes', icon: '📄' },
+        { label: 'Reportes', route: '/admin/reportes', icon: '📄', permiso: 'membresia' },
       ],
     },
     {
       label: 'Organización',
       items: [
-        { label: 'Distritos', route: '/admin/distritos', icon: '🗺️' },
-        { label: 'Iglesias', route: '/admin/iglesias', icon: '⛪' },
+        { label: 'Distritos', route: '/admin/distritos', icon: '🗺️', permiso: 'organizacion' },
+        { label: 'Iglesias', route: '/admin/iglesias', icon: '⛪', permiso: 'iglesias' },
       ],
     },
     {
       label: 'Personal',
       items: [
-        { label: 'Pastores', route: '/admin/pastores', icon: '👤' },
-        { label: 'Líderes', route: '/admin/lideres', icon: '🌟' },
-        { label: 'Congregantes', route: '/admin/congregantes', icon: '👥' },
+        { label: 'Pastores', route: '/admin/pastores', icon: '👤', permiso: 'iglesias' },
+        { label: 'Líderes', route: '/admin/lideres', icon: '🌟', permiso: 'iglesias' },
+        { label: 'Congregantes', route: '/admin/congregantes', icon: '👥', permiso: 'membresia' },
       ],
     },
     {
       label: 'Ministerios',
-      items: [{ label: 'Ministerios', route: '/admin/ministerios', icon: '✝️' }],
+      items: [
+        { label: 'Ministerios', route: '/admin/ministerios', icon: '✝️', permiso: 'organizacion' },
+      ],
     },
     {
       label: 'Contenido',
       items: [
-        { label: 'Eventos', route: '/admin/eventos', icon: '📅' },
-        { label: 'Comunicados', route: '/admin/comunicados', icon: '📢' },
+        { label: 'Eventos', route: '/admin/eventos', icon: '📅', permiso: 'contenido' },
+        { label: 'Comunicados', route: '/admin/comunicados', icon: '📢', permiso: 'contenido' },
       ],
     },
     {
       label: 'Sistema',
-      items: [{ label: 'Usuarios', route: '/admin/usuarios', icon: '🔐' }],
+      items: [
+        { label: 'Usuarios', route: '/admin/usuarios', icon: '🔐', permiso: 'usuarios' },
+        { label: 'Auditoría', route: '/admin/auditoria', icon: '🛡️', permiso: 'auditoria' },
+      ],
     },
   ];
 }
