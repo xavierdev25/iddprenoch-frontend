@@ -63,8 +63,6 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
             ← Volver al sitio público
           </a>
         </div>
-
-        <p class="text-center text-xs text-muted mt-6 opacity-50">Demo: admin / admin123</p>
       </div>
     </div>
   `,
