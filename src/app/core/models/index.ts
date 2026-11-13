@@ -111,6 +111,23 @@ export interface Usuario {
   rolId: number;
   email?: string;
   estadoId: number;
+  /** Solo el Obispo distrital tiene distrito; los roles regionales lo tienen en `null`. */
+  distritoId?: number | null;
+  /** Nombre del rol. Lo devuelven `/auth/login` y `/auth/me` (no el listado de usuarios). */
+  rol?: string;
+}
+
+/** Fila del registro de auditoría (solo la consulta el Responsable del sistema). */
+export interface RegistroAuditoria {
+  id: number;
+  fecha: string;
+  usuarioId?: number;
+  usuarioNombre?: string;
+  accion: string;
+  recurso: string;
+  resultado: 'PERMITIDO' | 'DENEGADO';
+  detalle?: string;
+  ip?: string;
 }
 
 export interface Rol {
