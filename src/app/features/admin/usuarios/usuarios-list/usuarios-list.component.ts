@@ -1,5 +1,10 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { CatalogosService } from '../../../../core/services/catalogos.service';
+import { DistritosService } from '../../../../core/services/distritos.service';
+import { ROLES } from '../../../../core/utils/permisos.util';
 import { UsuariosService } from '../../../../core/services/usuarios.service';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -8,11 +13,12 @@ import { ModalComponent } from '../../../../shared/ui/modal/modal.component';
 import { PaginationComponent } from '../../../../shared/ui/pagination/pagination.component';
 import { Usuario } from '../../../../core/models';
 
-const ROL_BADGE: Record<number, { text: string; color: 'teal' | 'blue' | 'amber' | 'gray' }> = {
-  1: { text: 'Administrador', color: 'teal' },
-  2: { text: 'Secretaria', color: 'blue' },
-  3: { text: 'Tesorero', color: 'amber' },
-  4: { text: 'Editor', color: 'gray' },
+// Por nombre y no por id: los ids de roles difieren entre bases (desarrollo, producción).
+const COLOR_ROL: Record<string, 'teal' | 'blue' | 'amber' | 'gray'> = {
+  [ROLES.RESPONSABLE]: 'teal',
+  [ROLES.OBISPO_REGIONAL]: 'blue',
+  [ROLES.OBISPO_DISTRITAL]: 'amber',
+  [ROLES.EDITOR]: 'gray',
 };
 const ESTADO_BADGE: Record<number, { text: string; color: 'green' | 'gray' }> = {
   1: { text: 'Activo', color: 'green' },
@@ -27,14 +33,14 @@ const ESTADO_BADGE: Record<number, { text: string; color: 'green' | 'gray' }> = 
     <div>
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="font-display text-2xl text-foreground">Usuarios del sistema</h1>
+          <h1 class="font-display text-2xl text-foreground">Usuarios y roles</h1>
           <p class="text-muted text-sm mt-0.5">{{ total() }} usuarios registrados</p>
         </div>
         <a routerLink="/admin/usuarios/nuevo"><app-button>+ Nuevo usuario</app-button></a>
       </div>
       <div class="bg-surface border border-border rounded-xl overflow-hidden">
         <app-table
-          [columns]="columns"
+          [columns]="columns()"
           [data]="usuarios()"
           emptyIcon="🔐"
           emptyMessage="Aún no hay usuarios registrados"
@@ -65,6 +71,13 @@ const ESTADO_BADGE: Record<number, { text: string; color: 'green' | 'gray' }> = 
 export class UsuariosListComponent implements OnInit {
   private readonly service = inject(UsuariosService);
   private readonly breadcrumb = inject(BreadcrumbService);
+  private readonly roles = toSignal(inject(CatalogosService).getRoles(), { initialValue: [] });
+  private readonly distritos = toSignal(
+    inject(DistritosService)
+      .getAll({ limit: 100 })
+      .pipe(map((r) => r.data)),
+    { initialValue: [] },
+  );
 
   readonly limit = 20;
   usuarios = signal<Usuario[]>([]);
@@ -74,20 +87,38 @@ export class UsuariosListComponent implements OnInit {
   deleteModal = signal(false);
   toDelete = signal<Usuario | null>(null);
 
-  readonly columns: TableColumn[] = [
-    { key: 'nombre', header: 'Nombre' },
-    { key: 'email', header: 'Email', render: (row) => String(row['email'] ?? '—') },
-    {
-      key: 'rolId',
-      header: 'Rol',
-      badge: (row) => ROL_BADGE[Number(row['rolId'])] ?? { text: '—', color: 'gray' },
-    },
-    {
-      key: 'estadoId',
-      header: 'Estado',
-      badge: (row) => ESTADO_BADGE[Number(row['estadoId'])] ?? { text: '—', color: 'gray' },
-    },
-  ];
+  columns = computed<TableColumn[]>(() => {
+    const roles = this.roles();
+    const distritos = this.distritos();
+    return [
+      { key: 'nombre', header: 'Usuario' },
+      { key: 'email', header: 'Email', render: (row) => String(row['email'] ?? '—') },
+      {
+        key: 'rolId',
+        header: 'Rol',
+        badge: (row) => {
+          const nombre = roles.find((r) => r.id === Number(row['rolId']))?.nombre;
+          // Un rol fuera del catálogo (Secretario, Tesorero) no tiene permisos: se avisa.
+          return nombre
+            ? { text: nombre, color: COLOR_ROL[nombre] ?? 'gray' }
+            : { text: 'Sin permisos', color: 'gray' };
+        },
+      },
+      {
+        key: 'distritoId',
+        header: 'Alcance',
+        render: (row) =>
+          row['distritoId']
+            ? (distritos.find((d) => d.id === Number(row['distritoId']))?.nombre ?? '—')
+            : 'Región',
+      },
+      {
+        key: 'estadoId',
+        header: 'Estado',
+        badge: (row) => ESTADO_BADGE[Number(row['estadoId'])] ?? { text: '—', color: 'gray' },
+      },
+    ];
+  });
 
   ngOnInit(): void {
     this.breadcrumb.set([{ label: 'Admin', route: '/admin/dashboard' }, { label: 'Usuarios' }]);

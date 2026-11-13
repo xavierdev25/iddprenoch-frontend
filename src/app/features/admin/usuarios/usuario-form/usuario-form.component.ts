@@ -5,11 +5,14 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UsuariosService } from '../../../../core/services/usuarios.service';
 import { CatalogosService } from '../../../../core/services/catalogos.service';
+import { DistritosService } from '../../../../core/services/distritos.service';
+import { esRolDistrital } from '../../../../core/utils/permisos.util';
+import { map } from 'rxjs';
 import { BreadcrumbService } from '../../../../core/services/breadcrumb.service';
 import { extractErrorMessage } from '../../../../core/utils/http-error.util';
 import { stripEmptyStrings } from '../../../../core/utils/clean-payload.util';
@@ -61,12 +64,35 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
           type="email"
           placeholder="usuario@iddp.pe"
         />
-        <app-select
-          label="Rol"
-          [control]="form.controls.rolId"
-          [options]="rolOptions()"
-          [required]="true"
-        />
+        <p class="text-xs text-muted -mb-1">
+          El rol define qué puede hacer; el distrito define sobre qué información.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <app-select
+            label="Rol"
+            [control]="form.controls.rolId"
+            [options]="rolOptions()"
+            [required]="true"
+          />
+          @if (esDistrital()) {
+            <app-select
+              label="Distrito"
+              [control]="form.controls.distritoId"
+              [options]="distritoOptions()"
+              placeholder="Elegir distrito…"
+              [required]="true"
+            />
+          }
+        </div>
+        @if (esDistrital() && distritoElegido(); as distrito) {
+          <div
+            class="px-3 py-2.5 rounded bg-secondary/10 border border-secondary/30 text-foreground text-sm"
+          >
+            Este usuario solo podrá ver y editar la membresía de las iglesias del distrito
+            <strong>{{ distrito }}</strong
+            >. Cualquier intento de acceder a otro distrito será rechazado y quedará registrado.
+          </div>
+        }
         <app-select
           label="Estado"
           [control]="form.controls.estadoId"
@@ -118,6 +144,7 @@ export class UsuarioFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly breadcrumb = inject(BreadcrumbService);
+  private readonly distritosService = inject(DistritosService);
 
   isEditing = signal(false);
   loading = signal(false);
@@ -131,7 +158,12 @@ export class UsuarioFormComponent implements OnInit {
   roles = toSignal(this.catalogosService.getRoles(), { initialValue: [] });
   estadosUsuario = toSignal(this.catalogosService.getEstadosUsuario(), { initialValue: [] });
 
+  distritos = toSignal(this.distritosService.getAll({ limit: 100 }).pipe(map((r) => r.data)), {
+    initialValue: [],
+  });
+
   rolOptions = () => this.roles().map((r) => ({ value: r.id, label: r.nombre }));
+  distritoOptions = () => this.distritos().map((d) => ({ value: d.id, label: d.nombre }));
   estadoOptions = () => this.estadosUsuario().map((e) => ({ value: e.id, label: e.nombre }));
 
   form = this.fb.nonNullable.group({
@@ -139,6 +171,8 @@ export class UsuarioFormComponent implements OnInit {
     email: ['', [Validators.email]],
     rolId: [0, [Validators.required, Validators.min(1)]],
     estadoId: [1],
+    // Obligatorio solo para el Obispo distrital (ver actualizarValidacionDistrito).
+    distritoId: [''],
     password: [
       '',
       this.isEditingMode
@@ -153,6 +187,29 @@ export class UsuarioFormComponent implements OnInit {
     ],
   });
 
+  private readonly rolElegido = toSignal(this.form.controls.rolId.valueChanges, {
+    initialValue: this.form.controls.rolId.value,
+  });
+  private readonly distritoIdElegido = toSignal(this.form.controls.distritoId.valueChanges, {
+    initialValue: '',
+  });
+
+  esDistrital = computed(() =>
+    esRolDistrital(this.roles().find((r) => r.id === Number(this.rolElegido()))?.nombre),
+  );
+  distritoElegido = computed(
+    () => this.distritos().find((d) => d.id === Number(this.distritoIdElegido()))?.nombre,
+  );
+
+  // El distrito solo se exige cuando el rol es Obispo distrital. Es un effect y no una suscripción
+  // al select porque `esDistrital` también depende del catálogo de roles, que llega por HTTP y
+  // puede hacerlo después de que se cargó el usuario a editar.
+  private readonly validarDistrito = effect(() => {
+    const control = this.form.controls.distritoId;
+    control.setValidators(this.esDistrital() ? [Validators.required] : []);
+    control.updateValueAndValidity();
+  });
+
   ngOnInit(): void {
     // Si `password` cambia después de que el usuario ya llenó `confirmarPassword`, el validador
     // cruzado de este último no se reevalúa solo (Angular solo re-corre validadores del control
@@ -165,7 +222,7 @@ export class UsuarioFormComponent implements OnInit {
     if (id !== null) {
       this.isEditing.set(true);
       this.service.getById(Number(id)).subscribe((u) => {
-        if (u) this.form.patchValue(u);
+        if (u) this.form.patchValue({ ...u, distritoId: u.distritoId ? String(u.distritoId) : '' });
       });
       this.breadcrumb.set([
         { label: 'Admin', route: '/admin/dashboard' },
@@ -189,11 +246,16 @@ export class UsuarioFormComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     const { confirmarPassword, ...raw } = this.form.getRawValue();
-    const data = stripEmptyStrings({
-      ...raw,
-      rolId: Number(raw.rolId),
-      estadoId: Number(raw.estadoId),
-    });
+    const { distritoId, ...resto } = raw;
+    const data = {
+      ...stripEmptyStrings({
+        ...resto,
+        rolId: Number(raw.rolId),
+        estadoId: Number(raw.estadoId),
+      }),
+      // `null` explícito: al pasar a un rol regional, el backend quita el distrito anterior.
+      distritoId: this.esDistrital() && distritoId ? Number(distritoId) : null,
+    };
     const id = this.route.snapshot.paramMap.get('id');
     const op = id !== null ? this.service.update(Number(id), data) : this.service.create(data);
     op.subscribe({
