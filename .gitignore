@@ -46,3 +46,5 @@ Thumbs.db
 .claude
 skills
 legacy-archivado
+# Cookies de sesión exportadas por curl/Bruno: contienen tokens, nunca se versionan
+cookies.txt
