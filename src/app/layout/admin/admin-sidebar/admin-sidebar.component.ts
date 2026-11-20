@@ -164,6 +164,10 @@ export class AdminSidebarComponent {
       ],
     },
     {
+      label: 'Votación',
+      items: [{ label: 'Asambleas', route: '/admin/asambleas', icon: '🗳️', permiso: 'asambleas' }],
+    },
+    {
       label: 'Contenido',
       items: [
         { label: 'Eventos', route: '/admin/eventos', icon: '📅', permiso: 'contenido' },

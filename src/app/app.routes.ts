@@ -130,6 +130,14 @@ export const routes: Routes = [
       },
     ],
   },
+  // Vista del elector: fuera del sitio público y del panel, sin menús (ADR-029).
+  {
+    path: 'votar/:codigo',
+    data: { noIndex: true },
+    loadComponent: () =>
+      import('./features/votacion/votar.component').then((m) => m.VotarComponent),
+    title: 'Votación — IDDP Región Norte Chico',
+  },
   {
     path: 'admin',
     data: { noIndex: true },
@@ -331,6 +339,36 @@ export const routes: Routes = [
                 (m) => m.ReportesComponent,
               ),
             title: 'Reportes — IDDP Admin',
+          },
+          {
+            path: 'asambleas',
+            canActivate: [permisoGuard('asambleas')],
+            children: [
+              {
+                path: '',
+                loadComponent: () =>
+                  import('./features/admin/asambleas/asambleas-list.component').then(
+                    (m) => m.AsambleasListComponent,
+                  ),
+                title: 'Asambleas — IDDP Admin',
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./features/admin/asambleas/asamblea-detail.component').then(
+                    (m) => m.AsambleaDetailComponent,
+                  ),
+                title: 'Asamblea — IDDP Admin',
+              },
+              {
+                path: ':id/padron',
+                loadComponent: () =>
+                  import('./features/admin/asambleas/padron.component').then(
+                    (m) => m.PadronComponent,
+                  ),
+                title: 'Padrón — IDDP Admin',
+              },
+            ],
           },
           {
             path: 'auditoria',

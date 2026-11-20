@@ -199,6 +199,13 @@ export class DashboardComponent implements OnInit {
       permiso: 'contenido' as Permiso,
     },
     {
+      icon: '🗳️',
+      titulo: 'Asambleas',
+      descripcion: 'Votación electrónica',
+      ruta: '/admin/asambleas',
+      permiso: 'asambleas' as Permiso,
+    },
+    {
       icon: '🔐',
       titulo: 'Gestionar usuarios',
       descripcion: 'Permisos del sistema',

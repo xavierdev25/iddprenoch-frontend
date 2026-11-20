@@ -20,6 +20,10 @@ export const serverRoutes: ServerRoute[] = [
   // en el navegador (en vez de RenderMode.Server) para no tener que
   // reenviar manualmente la cookie de la request original durante el SSR.
   { path: 'admin/**', renderMode: RenderMode.Client },
+  // Votación y proyección: dependen de un código de asamblea y de datos en vivo; nada que
+  // prerenderizar. El .htaccess ya sirve index.csr.html para cualquier ruta desconocida.
+  { path: 'votar/**', renderMode: RenderMode.Client },
+  { path: 'proyeccion/**', renderMode: RenderMode.Client },
   // Todo lo demás — prerender estático
   { path: '**', renderMode: RenderMode.Prerender },
 ];
