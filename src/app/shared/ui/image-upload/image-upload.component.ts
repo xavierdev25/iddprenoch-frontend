@@ -1,5 +1,6 @@
 import { Component, OnInit, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { reducirImagen } from '../../../core/utils/imagen.util';
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -44,6 +45,8 @@ let counter = 0;
 export class ImageUploadComponent implements OnInit {
   label = input<string>('Imagen');
   control = input.required<FormControl<string>>();
+  /** Si se indica, la imagen se reduce en el navegador a este lado máximo (px) antes de guardarla. */
+  maxLado = input<number | undefined>(undefined);
 
   readonly id = `image-upload-${++counter}`;
 
@@ -77,6 +80,14 @@ export class ImageUploadComponent implements OnInit {
     // data URL y se guarda así directamente en el mock data en memoria. Cuando exista
     // el backend, reemplazar esto por un upload a almacenamiento real (S3 o disco del
     // servidor Node.js) y guardar aquí solo la URL devuelta — nunca data URLs en producción.
+    const maxLado = this.maxLado();
+    if (maxLado) {
+      reducirImagen(file, maxLado)
+        .then((dataUrl) => this.aplicar(dataUrl))
+        .catch(() => this.error.set('No se pudo procesar la imagen. Prueba con otra.'));
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
@@ -85,5 +96,11 @@ export class ImageUploadComponent implements OnInit {
       this.preview.set(dataUrl);
     };
     reader.readAsDataURL(file);
+  }
+
+  private aplicar(dataUrl: string): void {
+    this.control().setValue(dataUrl);
+    this.control().markAsDirty();
+    this.preview.set(dataUrl);
   }
 }
