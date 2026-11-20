@@ -303,3 +303,36 @@ export interface Constancia {
   ronda: number;
   emitidoEn: string;
 }
+
+export interface ConteoCandidato {
+  id: number;
+  nombre: string;
+  detalle: string | null;
+  votos: number;
+  porcentaje: number;
+}
+
+/** Conteo de una elección: SOLO llega al panel del administrador (REST y Socket.IO). */
+export interface Conteo {
+  eleccionId: number;
+  asambleaId: number;
+  cargo: string;
+  ronda: number;
+  estado: EstadoEleccion;
+  ganadorId: number | null;
+  publicada: boolean;
+  acreditados: number;
+  emisiones: number;
+  total: number;
+  candidatos: ConteoCandidato[];
+  empatados: number[];
+}
+
+/** Lo único que recibe la proyección: el ganador publicado. */
+export interface Proclamacion {
+  eleccionId: number;
+  cargo: string;
+  ronda: number;
+  candidato: { id: number; nombre: string; detalle: string | null; tieneFoto: boolean };
+  publicadaEn: string;
+}

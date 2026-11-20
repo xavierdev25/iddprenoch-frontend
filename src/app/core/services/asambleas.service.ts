@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { ArchivoDescargado } from './reportes.service';
 import {
   Acreditacion,
   Asamblea,
   AsambleaDetalle,
   BusquedaDni,
   CandidatoAdmin,
+  Conteo,
+  Proclamacion,
   ElectorPadron,
   Paginated,
   TipoAsamblea,
@@ -133,4 +136,50 @@ export class AsambleasService {
       regenerar,
     });
   }
+
+  // ── Conducción de la votación (Sprint 3) ──
+
+  conteo(eleccionId: number): Observable<Conteo> {
+    return this.http.get<Conteo>(`${this.api}/elecciones/${eleccionId}/conteo`);
+  }
+
+  abrir(eleccionId: number): Observable<Conteo> {
+    return this.http.post<Conteo>(`${this.api}/elecciones/${eleccionId}/abrir`, {});
+  }
+
+  cerrar(eleccionId: number): Observable<Conteo> {
+    return this.http.post<Conteo>(`${this.api}/elecciones/${eleccionId}/cerrar`, {});
+  }
+
+  segundaVuelta(eleccionId: number): Observable<{ id: number; ronda: number }> {
+    return this.http.post<{ id: number; ronda: number }>(
+      `${this.api}/elecciones/${eleccionId}/segunda-vuelta`,
+      {},
+    );
+  }
+
+  publicar(eleccionId: number): Observable<Proclamacion> {
+    return this.http.post<Proclamacion>(`${this.api}/elecciones/${eleccionId}/publicar`, {});
+  }
+
+  finalizar(asambleaId: number): Observable<unknown> {
+    return this.http.post(`${this.api}/asambleas/${asambleaId}/finalizar`, {});
+  }
+
+  /** Por HttpClient (blob) y no por un enlace: así viaja la cookie de sesión (ver reportes.service). */
+  descargar(
+    asambleaId: number,
+    archivo: 'acta.pdf' | 'metricas.csv',
+  ): Observable<ArchivoDescargado> {
+    return this.http
+      .get(`${this.api}/asambleas/${asambleaId}/${archivo}`, {
+        responseType: 'blob',
+        observe: 'response',
+      })
+      .pipe(map((r: HttpResponse<Blob>) => ({ blob: r.body!, nombre: nombre(r, archivo) })));
+  }
+}
+
+function nombre(r: HttpResponse<Blob>, respaldo: string): string {
+  return /filename="?([^";]+)"?/.exec(r.headers.get('Content-Disposition') ?? '')?.[1] ?? respaldo;
 }
