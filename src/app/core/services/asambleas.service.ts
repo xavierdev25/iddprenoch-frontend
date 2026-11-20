@@ -56,8 +56,9 @@ export class AsambleasService {
     return this.http.put<Asamblea>(`${this.api}/asambleas/${id}`, datos);
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/asambleas/${id}`);
+  /** `forzar`: borra también una asamblea con votos (solo el Responsable del sistema; se audita). */
+  delete(id: number, forzar = false): Observable<void> {
+    return this.http.delete<void>(`${this.api}/asambleas/${id}${forzar ? '?forzar=1' : ''}`);
   }
 
   crearEleccion(asambleaId: number, cargo: string): Observable<{ id: number }> {

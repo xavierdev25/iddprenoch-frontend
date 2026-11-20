@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { ROLES } from '../../../core/utils/permisos.util';
 import { AsambleasService } from '../../../core/services/asambleas.service';
 import { guardarArchivo } from '../../../core/services/reportes.service';
 import { TiempoRealService } from '../../../core/services/tiempo-real.service';
@@ -63,6 +65,9 @@ import { BADGE_ASAMBLEA, BADGE_ELECCION, formatearFecha, formatearHora } from '.
             <app-button variant="ghost" (clicked)="descargar('metricas.csv')"
               >Métricas (CSV)</app-button
             >
+            @if (esResponsable()) {
+              <app-button variant="ghost" (clicked)="eliminarAsamblea()">Eliminar</app-button>
+            }
             @if (a.estado === 'EN_CURSO') {
               <app-button variant="danger" (clicked)="finalizar()">Finalizar asamblea</app-button>
             }
@@ -389,6 +394,9 @@ export class AsambleaDetailComponent implements OnInit, OnDestroy {
   private readonly breadcrumb = inject(BreadcrumbService);
   private readonly fb = inject(FormBuilder);
   private readonly tiempoReal = inject(TiempoRealService);
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+  readonly esResponsable = computed(() => this.auth.currentUser()?.rol === ROLES.RESPONSABLE);
   private suscripcion?: Subscription;
 
   readonly badgeAsamblea = BADGE_ASAMBLEA;
@@ -524,6 +532,24 @@ export class AsambleaDetailComponent implements OnInit, OnDestroy {
     if (confirm('¿Finalizar la asamblea? Ya no se podrán abrir más votaciones.')) {
       this.ejecutar(this.service.finalizar(this.id));
     }
+  }
+
+  /**
+   * Una asamblea con votos es un acta: el backend solo la borra forzando, y solo al Responsable.
+   * Se pide confirmación escribiendo el código, para que no se borre por un clic distraído.
+   */
+  eliminarAsamblea(): void {
+    const a = this.asamblea();
+    if (!a) return;
+    const conVotos = a.elecciones.some((e) => e.emisiones > 0);
+    const aviso = conVotos
+      ? `Esta asamblea TIENE VOTOS. Se borrarán definitivamente con sus resultados.\nEscribe el código ${a.codigoAcceso} para confirmar:`
+      : `Escribe el código ${a.codigoAcceso} para eliminar la asamblea:`;
+    if (prompt(aviso)?.trim().toUpperCase() !== a.codigoAcceso) return;
+    this.service.delete(a.id, conVotos).subscribe({
+      next: () => void this.router.navigate(['/admin/asambleas']),
+      error: (err) => this.error.set(extractErrorMessage(err)),
+    });
   }
 
   descargar(archivo: 'acta.pdf' | 'metricas.csv'): void {
