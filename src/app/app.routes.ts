@@ -139,6 +139,13 @@ export const routes: Routes = [
     title: 'Votación — IDDP Región Norte Chico',
   },
   {
+    path: 'proyeccion/:codigo',
+    data: { noIndex: true },
+    loadComponent: () =>
+      import('./features/proyeccion/proyeccion.component').then((m) => m.ProyeccionComponent),
+    title: 'Proyección — IDDP Región Norte Chico',
+  },
+  {
     path: 'admin',
     data: { noIndex: true },
     children: [
