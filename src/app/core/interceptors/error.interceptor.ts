@@ -13,7 +13,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // quien decida la redirección (vía UrlTree) para evitar una navegación
       // duplicada a /admin/login.
       const isAuthCheck = req.url.endsWith('/auth/me');
-      if (error.status === 401 && !isAuthCheck) {
+      // Las rutas del elector y de la proyección tienen su propia sesión (o ninguna): un 401 ahí
+      // lo resuelve su pantalla, nunca el login del panel.
+      const esPublica = req.url.includes('/votacion/') || req.url.includes('/proyeccion/');
+      if (error.status === 401 && !isAuthCheck && !esPublica) {
         void router.navigate(['/admin/login']);
       }
       return throwError(() => error);

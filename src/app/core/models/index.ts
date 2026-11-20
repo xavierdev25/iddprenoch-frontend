@@ -188,3 +188,118 @@ export interface ReporteMembresia {
   filas: FilaConsolidado[];
   totales: Conteos;
 }
+
+// ── Votación en asambleas (ADR-029) ────────────────────────────────────────────────────────────
+
+export type TipoAsamblea = 'REGIONAL' | 'DISTRITAL';
+export type EstadoAsamblea = 'PROGRAMADA' | 'EN_CURSO' | 'FINALIZADA';
+export type EstadoEleccion = 'PENDIENTE' | 'ABIERTA' | 'CERRADA';
+
+export interface Asamblea {
+  id: number;
+  nombre: string;
+  tipo: TipoAsamblea;
+  distritoId: number | null;
+  distrito: string | null;
+  fecha: string;
+  codigoAcceso: string;
+  estado: EstadoAsamblea;
+  /** Solo en el listado. */
+  elecciones?: number;
+  electores?: number;
+}
+
+export interface CandidatoAdmin {
+  id: number;
+  nombre: string;
+  detalle: string | null;
+  orden: number;
+}
+
+export interface EleccionAdmin {
+  id: number;
+  cargo: string;
+  ronda: number;
+  estado: EstadoEleccion;
+  abiertaEn: string | null;
+  cerradaEn: string | null;
+  publicadaEn: string | null;
+  ganadorId: number | null;
+  ganador: string | null;
+  emisiones: number;
+  candidatos: CandidatoAdmin[];
+}
+
+export interface AsambleaDetalle extends Omit<Asamblea, 'elecciones' | 'electores'> {
+  padron: number;
+  acreditados: number;
+  elecciones: EleccionAdmin[];
+}
+
+export interface ElectorPadron {
+  id: number;
+  dni: string;
+  nombre: string;
+  iglesia: string | null;
+  acreditado: boolean;
+  acreditadoEn: string | null;
+  votos: number;
+}
+
+export interface BusquedaDni {
+  enPadron: boolean;
+  elector?: {
+    id: number;
+    dni: string;
+    nombre: string;
+    acreditado: boolean;
+    iglesia: string | null;
+  };
+  sugerencia?: { dni: string; nombre: string; iglesiaId: number; iglesia: string } | null;
+}
+
+export interface Acreditacion {
+  elector: { id: number; dni: string; nombre: string };
+  /** En claro, una sola vez: la mesa se lo entrega al elector. */
+  codigo: string;
+  regenerado: boolean;
+}
+
+// Vista del elector: nunca trae conteos.
+export type EstadoParaElector = 'ESPERA' | 'ABIERTA' | 'FINALIZADA';
+
+export interface InfoVotacion {
+  nombre: string;
+  estado: EstadoParaElector;
+  eleccion: { id: number; cargo: string; ronda: number } | null;
+  siguienteCargo: string | null;
+}
+
+export interface EstadoElector {
+  estado: EstadoParaElector;
+  eleccionId: number | null;
+  version: number;
+  yaVoto: boolean;
+}
+
+export interface CandidatoCedula {
+  id: number;
+  nombre: string;
+  detalle: string | null;
+  tieneFoto: boolean;
+}
+
+export interface Cedula {
+  eleccionId: number;
+  cargo: string;
+  ronda: number;
+  yaVoto: boolean;
+  candidatos: CandidatoCedula[];
+}
+
+export interface Constancia {
+  numero: string;
+  cargo: string;
+  ronda: number;
+  emitidoEn: string;
+}
